@@ -196,14 +196,14 @@ class DomoticzWrapper:
         Arguments:
             values {List[DomoticzDebugLevel]} -- List of debug levels to logically-OR together
         """
-        if values is int:
-            self.__Domoticz.Debugging(values)
+        if values is int or values is DomoticzDebugLevel:
+            self.__Domoticz.Debugging(int(values))
         elif DomoticzDebugLevel.ShowNone in values:
             self.__Domoticz.Debugging(0)
         elif DomoticzDebugLevel.ShowNone in values:
             self.__Domoticz.Debugging(1)
         else:
-            self.__Domoticz.Debugging(sum(values))
+            self.__Domoticz.Debugging(sum([int(v) for v in values]))
 
     def Heartbeat(self, val: int):
         """Set the heartbeat interval in seconds, default 10 seconds.
