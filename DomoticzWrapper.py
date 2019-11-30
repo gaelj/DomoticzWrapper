@@ -189,7 +189,7 @@ class DomoticzWrapper:
         """
         self.__Domoticz.Error(val)
 
-    def Debugging(self, values: List[DomoticzDebugLevel] or DomoticzDebugLevel or int):
+    def Debugging(self, values: List[DomoticzDebugLevel]):
         """Set logging level and type for debugging. Multiple values are supported.
         Mask values can be added together, for example to see debugging details around the plugin and its objects use: Domoticz.Debugging(62) # 2+4+8+16+32
 
