@@ -144,7 +144,7 @@ class DomoticzWrapper:
         Returns:
             Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
         """
-        return dict([(DomoticzPluginParameter(k), self.__Parameters[k]) for k in self.__Parameters.keys()])
+        return dict([(DomoticzPluginParameter(k), self.__Parameters[k]) for k in self.__Parameters])
 
     @property
     def Devices(self) -> Dict[int, DomoticzDevice]:
@@ -153,12 +153,12 @@ class DomoticzWrapper:
         Returns:
             Dict[int, DomoticzDevice] -- Dictionary of device ids to device objects
         """
-        return dict([(k, DomoticzDevice(self.__Devices[k])) for k in self.__Devices.keys()])
+        return dict([(k, DomoticzDevice(self.__Devices[k])) for k in self.__Devices])
 
     @property
     def Images(self) -> Dict[str, DomoticzImage]:
         """Available images"""
-        return dict([(k, DomoticzImage(self.__Images[k])) for k in self.__Images.keys()])
+        return dict([(k, DomoticzImage(self.__Images[k])) for k in self.__Images])
 
     # @property
     # def x(self) -> str:
