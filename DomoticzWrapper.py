@@ -125,6 +125,10 @@ class DomoticzWrapper:
         self.__Images = _Images
 
     @property
+    def Domoticz(self):
+        return self.__Domoticz
+
+    @property
     def Settings(self) -> Dict[str, str]:
         """Contents of the Domoticz Settings page as found in the Preferences database table. These are always available and will be updated if the user changes any settings. The plugin is not restarted. They can be accessed by name for example: Settings["Language"]
 
@@ -302,10 +306,11 @@ class DomoticzWrapper:
                 self.Debug("Add authentication for user {}".format(
                     self.Parameters[DomoticzPluginParameter.Username]))
                 credentials = ('%s:%s' %
-                            (self.Parameters[DomoticzPluginParameter.Username], self.Parameters[DomoticzPluginParameter.Password]))
-                encoded_credentials = base64.b64encode(credentials.encode('ascii'))
+                               (self.Parameters[DomoticzPluginParameter.Username], self.Parameters[DomoticzPluginParameter.Password]))
+                encoded_credentials = base64.b64encode(
+                    credentials.encode('ascii'))
                 req.add_header('Authorization', 'Basic %s' %
-                            encoded_credentials.decode("ascii"))
+                               encoded_credentials.decode("ascii"))
 
             response = request.urlopen(req)
             if response.status == 200:
@@ -321,24 +326,25 @@ class DomoticzWrapper:
             self.Error("Error calling '{}'".format(url))
         return resultJson
 
-
     def CheckParam(self, name, value, default):
         try:
             param = int(value)
         except ValueError:
             param = default
-            self.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(name, value, default))
+            self.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(
+                name, value, default))
         return param
 
-
     # Generic helper functions
+
     def DumpConfigToLog(self):
         for x in self.Parameters:
             if self.Parameters[x] != "":
                 self.Debug("'" + x + "':'" + str(self.Parameters[x]) + "'")
         self.Debug("Device count: " + str(len(self.Devices)))
         for x in self.Devices:
-            self.Debug("Device:           " + str(x) + " - " + str(self.Devices[x]))
+            self.Debug("Device:           " + str(x) +
+                       " - " + str(self.Devices[x]))
             self.Debug("Device ID:       '" + str(self.Devices[x].ID) + "'")
             self.Debug("Device Name:     '" + self.Devices[x].Name + "'")
             self.Debug("Device nValue:    " + str(self.Devices[x].nValue))
@@ -380,7 +386,7 @@ class DomoticzDevice:
         - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is and eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
         Field type is Varchar(25) (default: {None})
         """
-        self._Device = d.__Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName, Type=Type, Subtype=Subtype,
+        self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName, Type=Type, Subtype=Subtype,
                                            Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
 
     def Create(self):
@@ -655,7 +661,7 @@ class DomoticzConnection:
                 Returns:
                     [type] -- [description]
         """
-        self._Connection = d.__Domoticz.Connection(
+        self._Connection = d.Domoticz.Connection(
             Name=Name, Transport=Transport, Protocol=Protocol, Address=Address, Port=Port, Baud=Baud)
 
     def __str__(self):
@@ -749,7 +755,7 @@ class DomoticzImage:
         self._Image = Image
 
     def __init__(self, d: DomoticzWrapper, filename: str):
-        self._Image = d.__Domoticz.Image(filename)
+        self._Image = d.Domoticz.Image(filename)
 
     def __str__(self):
         return str(self._Image)
