@@ -5,7 +5,7 @@ Based on information in https://www.domoticz.com/wiki/Developing_a_Python_plugin
 
 # DomoticzWrapper.Debugging([DomoticzDebugLevel.ShowNone])
 # DomoticzWrapper.Parameters(DomoticzParameter.Mode4)
-import Domoticz
+
 from enum import Enum
 from typing import List, Dict
 from datetime import datetime

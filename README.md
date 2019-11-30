@@ -2,7 +2,12 @@
 
 A documented wrapper around the Domoticz plugin API.
 
-Install in `DomoticzWrapper` sub-folder of the Plugins folder.
+Install in `DomoticzWrapper` sub-folder of the Domoticz `plugins` folder:
+
+```bash
+cd ~
+git clone https://github.com/gaelj/DomoticzWrapper.git domoticz/plugins/DomoticzWrapper
+```
 
 Usage (in `plugin.py`):
 
