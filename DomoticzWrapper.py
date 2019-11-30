@@ -4,7 +4,14 @@ Based on information in https://www.domoticz.com/wiki/Developing_a_Python_plugin
 
 from enum import Enum
 from typing import List, Dict
-from datetime import datetime
+import json
+import urllib.parse as parse
+import urllib.request as request
+from datetime import datetime, timedelta
+import time
+import base64
+import itertools
+from distutils.version import LooseVersion
 
 
 class DomoticzDebugLevel(Enum):
@@ -281,6 +288,63 @@ class DomoticzWrapper:
             Dict[str, str] -- Resulting configuration object
         """
         return self.__Domoticz.Configuration(val)
+
+    # Plugin utility functions ---------------------------------------------------
+
+    def DomoticzAPI(self, APICall: str):
+        resultJson = None
+        url = "http://{}:{}/json.htm?{}".format(
+            self.Parameters[DomoticzPluginParameter.Address], self.Parameters[DomoticzPluginParameter.Port], parse.quote(APICall, safe="&="))
+        self.Debug("Calling domoticz API: {}".format(url))
+        try:
+            req = request.Request(url)
+            if self.Parameters[DomoticzPluginParameter.Username] != "":
+                self.Debug("Add authentication for user {}".format(
+                    self.Parameters[DomoticzPluginParameter.Username]))
+                credentials = ('%s:%s' %
+                            (self.Parameters[DomoticzPluginParameter.Username], self.Parameters[DomoticzPluginParameter.Password]))
+                encoded_credentials = base64.b64encode(credentials.encode('ascii'))
+                req.add_header('Authorization', 'Basic %s' %
+                            encoded_credentials.decode("ascii"))
+
+            response = request.urlopen(req)
+            if response.status == 200:
+                resultJson = json.loads(response.read().decode('utf-8'))
+                if resultJson["status"] != "OK":
+                    self.Error("Domoticz API returned an error: status = {}".format(
+                        resultJson["status"]))
+                    resultJson = None
+            else:
+                self.Error(
+                    "Domoticz API: http error = {}".format(response.status))
+        except:
+            self.Error("Error calling '{}'".format(url))
+        return resultJson
+
+
+    def CheckParam(self, name, value, default):
+        try:
+            param = int(value)
+        except ValueError:
+            param = default
+            self.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(name, value, default))
+        return param
+
+
+    # Generic helper functions
+    def DumpConfigToLog(self):
+        for x in self.Parameters:
+            if self.Parameters[x] != "":
+                self.Debug("'" + x + "':'" + str(self.Parameters[x]) + "'")
+        self.Debug("Device count: " + str(len(self.Devices)))
+        for x in self.Devices:
+            self.Debug("Device:           " + str(x) + " - " + str(self.Devices[x]))
+            self.Debug("Device ID:       '" + str(self.Devices[x].ID) + "'")
+            self.Debug("Device Name:     '" + self.Devices[x].Name + "'")
+            self.Debug("Device nValue:    " + str(self.Devices[x].nValue))
+            self.Debug("Device sValue:   '" + self.Devices[x].sValue + "'")
+            self.Debug("Device LastLevel: " + str(self.Devices[x].LastLevel))
+        return
 
 
 class DomoticzDevice:
@@ -775,3 +839,14 @@ class DeviceParam:
 #     switchtype_id: int
 #     switchtype_name: str
 #     description: str
+
+def parseCSV(strCSV):
+    listValues = []
+    for value in strCSV.split(","):
+        try:
+            val = int(value)
+        except:
+            pass
+        else:
+            listValues.append(val)
+    return listValues
