@@ -353,7 +353,7 @@ class DomoticzDevice:
     def __init__(self, Device):
         self._Device = Device
 
-    def str(self):
+    def __str__(self):
         return str(self._Device)
 
     def __init__(self, d: DomoticzWrapper, Name: str, Unit: int, TypeName: DomoticzTypeName = None, Type: int = None, Subtype: int = None, Switchtype: int = None, Image: int = None, Options: Dict[str, str] = None, Used: bool = False, DeviceID: str = None):
@@ -658,7 +658,7 @@ class DomoticzConnection:
         self._Connection = d.__Domoticz.Connection(
             Name=Name, Transport=Transport, Protocol=Protocol, Address=Address, Port=Port, Baud=Baud)
 
-    def str(self):
+    def __str__(self):
         return str(self._Connection)
 
     @property
@@ -751,7 +751,7 @@ class DomoticzImage:
     def __init__(self, d: DomoticzWrapper, filename: str):
         self._Image = d.__Domoticz.Image(filename)
 
-    def str(self):
+    def __str__(self):
         return str(self._Image)
 
     @property
