@@ -116,6 +116,29 @@ class DomoticzWrapper:
         self.Parameters = _Parameters
         self.Devices = _Devices
         self.Images = _Images
+        self.DomoticzImages: Dict[str, DomoticzImage] = _Images
+
+        self.DomoticzSettings: Dict[str, str] = _Settings
+        """Contents of the Domoticz Settings page as found in the Preferences database table. These are always available and will be updated if the user changes any settings. The plugin is not restarted. They can be accessed by name for example: Settings["Language"]
+
+            Returns:
+                Dict[str, str] -- Contents of the Domoticz Settings page as found in the Preferences database table. These are always available and will be updated if the user changes any settings. The plugin is not restarted. They can be accessed by name for example: Settings["Language"]
+            """
+
+        self.DomoticzParameters: Dict[DomoticzPluginParameter, str] = _Parameters
+        """These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
+
+            Returns:
+                Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
+            """
+
+        self.DomoticzDevices: Dict[int, DomoticzDevice] = _Devices
+        """Dictionary of device ids to device objects
+
+            Returns:
+                Dict[int, DomoticzDevice] -- Dictionary of device ids to device objects
+            """
+
 
     class DomoticzDevice:
         """A Domoticz Device"""
@@ -715,29 +738,6 @@ class DomoticzWrapper:
                 Dict[str, str] -- Resulting configuration object
             """
             return Domoticz.Configuration(val)
-
-    DomoticzImages: Dict[str, DomoticzImage] = Images
-
-    DomoticzSettings: Dict[str, str] = Settings
-    """Contents of the Domoticz Settings page as found in the Preferences database table. These are always available and will be updated if the user changes any settings. The plugin is not restarted. They can be accessed by name for example: Settings["Language"]
-
-        Returns:
-            Dict[str, str] -- Contents of the Domoticz Settings page as found in the Preferences database table. These are always available and will be updated if the user changes any settings. The plugin is not restarted. They can be accessed by name for example: Settings["Language"]
-        """
-
-    DomoticzParameters: Dict[DomoticzPluginParameter, str] = Parameters
-    """These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
-
-        Returns:
-            Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
-        """
-
-    DomoticzDevices: Dict[int, DomoticzDevice] = Devices
-    """Dictionary of device ids to device objects
-
-        Returns:
-            Dict[int, DomoticzDevice] -- Dictionary of device ids to device objects
-        """
 
 
 class DeviceParam:
