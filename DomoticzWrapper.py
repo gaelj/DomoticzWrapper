@@ -337,19 +337,19 @@ class DomoticzWrapper:
 
     # Generic helper functions
 
-    def DumpConfigToLog(self):
-        for x, parameter in self.Parameters:
-            if parameter != "":
-                self.Debug("'" + x + "':'" + str(parameter) + "'")
-        self.Debug("Device count: " + str(len(self.Devices)))
-        for x, device in self.Devices:
-            self.Debug("Device:           " + str(x) + " - " + str(device))
-            self.Debug("Device ID:       '" + str(device.ID) + "'")
-            self.Debug("Device Name:     '" + device.Name + "'")
-            self.Debug("Device nValue:    " + str(device.nValue))
-            self.Debug("Device sValue:   '" + device.sValue + "'")
-            self.Debug("Device LastLevel: " + str(device.LastLevel))
-        return
+    # def DumpConfigToLog(self):
+    #     for x, parameter in self.Parameters:
+    #         if parameter != "":
+    #             self.Debug("'" + str(x) + "':'" + str(parameter) + "'")
+    #     self.Debug("Device count: " + str(len(self.Devices)))
+    #     for x, device in self.Devices:
+    #         self.Debug("Device:           " + str(x) + " - " + str(device))
+    #         self.Debug("Device ID:       '" + str(device.ID) + "'")
+    #         self.Debug("Device Name:     '" + device.Name + "'")
+    #         self.Debug("Device nValue:    " + str(device.nValue))
+    #         self.Debug("Device sValue:   '" + device.sValue + "'")
+    #         self.Debug("Device LastLevel: " + str(device.LastLevel))
+    #     return
 
 
 class DomoticzDevice:
@@ -845,11 +845,11 @@ class DeviceParam:
 #     switchtype_name: str
 #     description: str
 
-def parseCSV(strCSV):
+def parseCSV(strCSV: str):
     listValues = []
     for value in strCSV.split(","):
         try:
-            val = int(value)
+            val = int(value.strip())
         except:
             pass
         else:
