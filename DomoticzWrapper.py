@@ -338,18 +338,17 @@ class DomoticzWrapper:
     # Generic helper functions
 
     def DumpConfigToLog(self):
-        for x in self.Parameters:
-            if self.Parameters[x] != "":
-                self.Debug("'" + x + "':'" + str(self.Parameters[x]) + "'")
+        for x, parameter in self.Parameters:
+            if parameter != "":
+                self.Debug("'" + x + "':'" + str(parameter) + "'")
         self.Debug("Device count: " + str(len(self.Devices)))
-        for x in self.Devices:
-            self.Debug("Device:           " + str(x) +
-                       " - " + str(self.Devices[x]))
-            self.Debug("Device ID:       '" + str(self.Devices[x].ID) + "'")
-            self.Debug("Device Name:     '" + self.Devices[x].Name + "'")
-            self.Debug("Device nValue:    " + str(self.Devices[x].nValue))
-            self.Debug("Device sValue:   '" + self.Devices[x].sValue + "'")
-            self.Debug("Device LastLevel: " + str(self.Devices[x].LastLevel))
+        for x, device in self.Devices:
+            self.Debug("Device:           " + str(x) + " - " + str(device))
+            self.Debug("Device ID:       '" + str(device.ID) + "'")
+            self.Debug("Device Name:     '" + device.Name + "'")
+            self.Debug("Device nValue:    " + str(device.nValue))
+            self.Debug("Device sValue:   '" + device.sValue + "'")
+            self.Debug("Device LastLevel: " + str(device.LastLevel))
         return
 
 
@@ -387,7 +386,7 @@ class DomoticzDevice:
         Field type is Varchar(25) (default: {None})
         """
         self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName, Type=Type, Subtype=Subtype,
-                                           Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                         Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
 
     def Create(self):
         """Creates the device in Domoticz from the object."""
