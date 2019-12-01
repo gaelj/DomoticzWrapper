@@ -2,7 +2,7 @@
 Based on information in https://www.domoticz.com/wiki/Developing_a_Python_plugin as of git commit dates
 """
 
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import List, Dict
 import json
 import urllib.parse as parse
@@ -14,7 +14,7 @@ import itertools
 from distutils.version import LooseVersion
 
 
-class DomoticzDebugLevel(Enum):
+class DomoticzDebugLevel(IntEnum):
     """Domoticz debug level mask values
 
     Arguments:
@@ -208,13 +208,13 @@ class DomoticzWrapper:
             values {List[DomoticzDebugLevel]} -- List of debug levels to logically-OR together
         """
         if values is int or values is DomoticzDebugLevel:
-            self.__Domoticz.Debugging(int(values))
+            self.__Domoticz.Debugging(values.value)
         elif DomoticzDebugLevel.ShowNone in values:
             self.__Domoticz.Debugging(0)
         elif DomoticzDebugLevel.ShowNone in values:
             self.__Domoticz.Debugging(1)
         else:
-            self.__Domoticz.Debugging(sum([int(v) for v in values]))
+            self.__Domoticz.Debugging(sum([v.value for v in values]))
 
     def Heartbeat(self, val: int):
         """Set the heartbeat interval in seconds, default 10 seconds.
@@ -326,7 +326,17 @@ class DomoticzWrapper:
             self.Error("Error calling '{}'".format(url))
         return resultJson
 
-    def CheckParam(self, name, value, default):
+    def CheckParam(self, name: str, value, default: int):
+        """Check that the value is an integer. If not, log an error and use the default value
+
+        Arguments:
+            name {str} -- The name to log
+            value {any} -- The value to check
+            default {int} -- Default value to use in case of error
+
+        Returns:
+            int -- The value if int or default value
+        """
         try:
             param = int(value)
         except ValueError:
@@ -337,19 +347,21 @@ class DomoticzWrapper:
 
     # Generic helper functions
 
-    # def DumpConfigToLog(self):
-    #     for x, parameter in self.Parameters:
-    #         if parameter != "":
-    #             self.Debug("'" + str(x) + "':'" + str(parameter) + "'")
-    #     self.Debug("Device count: " + str(len(self.Devices)))
-    #     for x, device in self.Devices:
-    #         self.Debug("Device:           " + str(x) + " - " + str(device))
-    #         self.Debug("Device ID:       '" + str(device.ID) + "'")
-    #         self.Debug("Device Name:     '" + device.Name + "'")
-    #         self.Debug("Device nValue:    " + str(device.nValue))
-    #         self.Debug("Device sValue:   '" + device.sValue + "'")
-    #         self.Debug("Device LastLevel: " + str(device.LastLevel))
-    #     return
+    def DumpConfigToLog(self):
+        for x in self.Parameters:
+            parameter = self.Parameters[x]
+            if parameter != "":
+                self.Debug("'" + str(x.name) + "':'" + str(parameter) + "'")
+        self.Debug("Device count: " + str(len(self.Devices)))
+        for x in self.Devices:
+            device = self.Devices[x]
+            self.Debug("Device:           " + str(x.name) + " - " + str(device))
+            self.Debug("Device ID:       '" + str(device.ID) + "'")
+            self.Debug("Device Name:     '" + device.Name + "'")
+            self.Debug("Device nValue:    " + str(device.nValue))
+            self.Debug("Device sValue:   '" + device.sValue + "'")
+            self.Debug("Device LastLevel: " + str(device.LastLevel))
+        return
 
 
 class DomoticzDevice:
@@ -385,7 +397,7 @@ class DomoticzDevice:
         - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is and eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
         Field type is Varchar(25) (default: {None})
         """
-        self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName, Type=Type, Subtype=Subtype,
+        self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value, Type=Type, Subtype=Subtype,
                                          Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
 
     def Create(self):
@@ -418,7 +430,7 @@ class DomoticzDevice:
         - SuppressTriggers {bool} -- Default: False Boolean flag that allows device attributes to be updated without notifications, scene or MQTT, event triggers. nValue and sValue are not written to the database and will be overwritten with current database values.  (default: {False})
         """
         self._Device.Update(nValue, sValue, Image, SignalLevel, BatteryLevel, Options, TimedOut, Name,
-                            TypeName, Type, Subtype, Switchtype, 1 if Used else 0, Description, Color, SuppressTriggers)
+                            TypeName.value, Type, Subtype, Switchtype, 1 if Used else 0, Description, Color, SuppressTriggers)
 
     def Delete(self):
         """Deletes the device in Domoticz"""
