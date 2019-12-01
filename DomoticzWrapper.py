@@ -207,7 +207,9 @@ class DomoticzWrapper:
         Arguments:
             values {List[DomoticzDebugLevel]} -- List of debug levels to logically-OR together
         """
-        if values is int or values is DomoticzDebugLevel:
+        if values is int:
+            self.__Domoticz.Debugging(values)
+        elif values is DomoticzDebugLevel:
             self.__Domoticz.Debugging(values.value)
         elif DomoticzDebugLevel.ShowNone in values:
             self.__Domoticz.Debugging(0)
