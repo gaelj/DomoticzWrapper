@@ -116,6 +116,22 @@ class DomoticzTypeName(Enum):
     WindTempChill = "Wind+Temp+Chill"
 
 
+class DomoticzDevice:
+    pass
+
+
+class DomoticzConnection:
+    pass
+
+
+class DomoticzImage:
+    pass
+
+
+class DeviceParam:
+    pass
+
+
 class DomoticzWrapper:
     def __init__(self, _Domoticz, _Settings, _Parameters, _Devices, _Images):
         self.__Domoticz = _Domoticz
