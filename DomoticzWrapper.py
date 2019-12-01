@@ -59,18 +59,18 @@ class DomoticzPluginParameter(Enum):
     - Enum {Mode6} -- General Parameter 6
     - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
     """
-    DomoticzVersion = 'Domoticz Version'
-    UserDataFolder = 'User Data Folder'
-    StartupFolder = 'Startup Folder'
-    DomoticzHash = 'Domoticz Hash'
-    DomoticzBuildTime = 'Domoticz Build Time'
+    DomoticzVersion = 'DomoticzVersion'
+    UserDataFolder = 'UserDataFolder'
+    StartupFolder = 'StartupFolder'
+    DomoticzHash = 'DomoticzHash'
+    DomoticzBuildTime = 'DomoticzBuildTime'
     Name = 'Name'
     Language = 'Language'
-    HardwareID = 'Hardware ID'
-    WebRoot = 'Web Root'
+    HardwareID = 'HardwareID'
+    WebRoot = 'WebRoot'
     Database = 'Database'
     Key = 'Key'
-    HomeFolder = 'Home Folder'
+    HomeFolder = 'HomeFolder'
     Author = 'Author'
     Version = 'Version'
     Address = 'Address'
@@ -86,13 +86,13 @@ class DomoticzPluginParameter(Enum):
     SerialPort = 'SerialPort'
 
 class DomoticzTypeName(Enum):
-    AirQuality = "Air Quality"
+    AirQuality = "AirQuality"
     Alert = "Alert"
     Barometer = "Barometer"
-    CounterIncremental = "Counter Incremental"
+    CounterIncremental = "CounterIncremental"
     Contact = "Contact"
-    CurrentAmpere = "Current/Ampere"
-    CurrentSingle = "Current (Single)"
+    CurrentAmpere = "CurrentAmpere"
+    CurrentSingle = "CurrentSingle"
     Custom = "Custom"
     Dimmer = "Dimmer"
     Distance = "Distance"
@@ -100,21 +100,21 @@ class DomoticzTypeName(Enum):
     Humidity = "Humidity"
     Illumination = "Illumination"
     kWh = "kWh"
-    LeafWetness = "Leaf Wetness"
+    LeafWetness = "LeafWetness"
     Motion = "Motion"
     Percentage = "Percentage"
-    PushOn = "Push On"
-    PushOff = "Push Off"
+    PushOn = "PushOn"
+    PushOff = "PushOff"
     Pressure = "Pressure"
     Rain = "Rain"
-    SelectorSwitch = "Selector Switch"
-    SoilMoisture = "Soil Moisture"
-    SolarRadiation = "Solar Radiation"
-    SoundLevel = "Sound Level"
+    SelectorSwitch = "SelectorSwitch"
+    SoilMoisture = "SoilMoisture"
+    SolarRadiation = "SolarRadiation"
+    SoundLevel = "SoundLevel"
     Switch = "Switch"
     Temperature = "Temperature"
-    TempHum = "Temp+Hum"
-    TempHumBaro = "Temp+Hum+Baro"
+    TempHum = "TempHum"
+    TempHumBaro = "TempHumBaro"
     Text = "Text"
     Usage = "Usage"
     UV = "UV"
@@ -122,7 +122,7 @@ class DomoticzTypeName(Enum):
     Voltage = "Voltage"
     Waterflow = "Waterflow"
     Wind = "Wind"
-    WindTempChill = "Wind+Temp+Chill"
+    WindTempChill = "WindTempChill"
 
 
 class DomoticzDevice:
