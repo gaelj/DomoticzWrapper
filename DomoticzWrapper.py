@@ -243,12 +243,12 @@ class DomoticzWrapper:
         """
         self.__Domoticz.Heartbeat(val)
 
-    def Notifier(self, name: string):
+    def Notifier(self, name: str):
         """Informs the plugin framework that the plugin's external hardware can consume Domoticz Notifications.
         When the plugin is active the supplied Name will appear as an additional target for Notifications in the standard Domoticz device notification editing page. The plugin framework will then call the onNotification callback when a notifiable event occurs.
 
         Arguments:
-            name {string} -- Domoticz Notifications target name
+            name {str} -- Domoticz Notifications target name
         """
         self.__Domoticz.Notifier(name)
 
