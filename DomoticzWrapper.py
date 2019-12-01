@@ -59,8 +59,18 @@ class DomoticzPluginParameter(Enum):
     - Enum {Mode6} -- General Parameter 6
     - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
     """
+    DomoticzVersion = 'Domoticz Version'
+    UserDataFolder = 'User Data Folder'
+    StartupFolder = 'Startup Folder'
+    DomoticzHash = 'Domoticz Hash'
+    DomoticzBuildTime = 'Domoticz Build Time'
+    Name = 'Name'
+    Language = 'Language'
+    HardwareID = 'Hardware ID'
+    WebRoot = 'Web Root'
+    Database = 'Database'
     Key = 'Key'
-    HomeFolder = 'HomeFolder'
+    HomeFolder = 'Home Folder'
     Author = 'Author'
     Version = 'Version'
     Address = 'Address'
@@ -74,7 +84,6 @@ class DomoticzPluginParameter(Enum):
     Mode5 = 'Mode5'
     Mode6 = 'Mode6'
     SerialPort = 'SerialPort'
-
 
 class DomoticzTypeName(Enum):
     AirQuality = "Air Quality"
@@ -160,10 +169,6 @@ class DomoticzWrapper:
         Returns:
             Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
         """
-        self.Log('****** PARAMETERS ******')
-        for k in self.__Parameters:
-            self.Log(str(k) + " - " + str(self.__Parameters[k]))
-        self.Log('**** END PARAMETERS ****')
         return dict([(DomoticzPluginParameter(k), self.__Parameters[k]) for k in self.__Parameters])
 
     @property
