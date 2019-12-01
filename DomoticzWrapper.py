@@ -160,8 +160,10 @@ class DomoticzWrapper:
         Returns:
             Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
         """
+        self.Log('****** PARAMETERS ******')
         for k in self.__Parameters:
             self.Log(str(k) + " - " + str(self.__Parameters[k]))
+        self.Log('**** END PARAMETERS ****')
         return dict([(DomoticzPluginParameter(k), self.__Parameters[k]) for k in self.__Parameters])
 
     @property
