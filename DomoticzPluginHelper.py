@@ -193,11 +193,11 @@ class DomoticzPluginHelper:
     def WriteLog(self, message, level="Normal"):
         if (self.logLevel == "Verbose" and level == "Verbose") or level == "Status":
             if self.statusSupported and level == "Status":
-                self.Status(message)
+                self.d.Status(message)
             else:
-                self.Log(message)
+                self.d.Log(message)
         elif level == "Normal":
-            self.Log(message)
+            self.d.Log(message)
 
     def InitDevice(self, Name: str, Unit: int,
                    DeviceType: DomoticzDeviceType,

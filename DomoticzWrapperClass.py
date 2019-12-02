@@ -187,12 +187,12 @@ class DomoticzWrapper:
         Returns:
             Dict[int, DomoticzDevice] -- Dictionary of device ids to device objects
         """
-        return dict([(k, DomoticzDevice(self.__Devices[k])) for k in self.__Devices])
+        return dict([(k, DomoticzDevice(Device=self.__Devices[k])) for k in self.__Devices])
 
     @property
     def Images(self) -> Dict[str, DomoticzImage]:
         """Available images"""
-        return dict([(k, DomoticzImage(self.__Images[k])) for k in self.__Images])
+        return dict([(k, DomoticzImage(Image=self.__Images[k])) for k in self.__Images])
 
     # @property
     # def x(self) -> str:
@@ -361,7 +361,6 @@ class DomoticzDevice:
         """
         if Device is not None:
             self._Device = Device
-            return
         elif DeviceType is None and TypeName is not None:
             if Image is None:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
@@ -369,7 +368,6 @@ class DomoticzDevice:
             else:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
                                                 Image=Image, Options=Options, Used=1 if Used else 0)
-            return
         elif isinstance(DeviceType, DomoticzDeviceType):
             if DeviceType.subtype_id is None:
                 if Image is None:
@@ -398,10 +396,10 @@ class DomoticzDevice:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
                                                     Image=Image, Options=Options, Used=1 if Used else 0)
-            return
-        if d is not None:
-            d.Log('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
-        raise Exception()
+        else:
+            if d is not None:
+                d.Log('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
+            raise Exception()
 
     # def __init__(self, d: DomoticzWrapper,
     #              Name: str, Unit: int,
