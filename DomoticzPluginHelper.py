@@ -122,7 +122,7 @@ class DomoticzPluginHelper:
         for x in self.d.Devices:
             device = self.d.Devices[x]
             self.d.Debug("Device:           " +
-                         str(x.name) + " - " + str(device))
+                         str(x) + " - " + str(device))
             self.d.Debug("Device ID:       '" + str(device.ID) + "'")
             self.d.Debug("Device Name:     '" + device.Name + "'")
             self.d.Debug("Device nValue:    " + str(device.nValue))
