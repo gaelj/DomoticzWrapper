@@ -20,7 +20,8 @@ from distutils.version import LooseVersion
 
 from DomoticzWrapperClass import \
     DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
-    DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage
+    DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage, \
+    DomoticzDeviceTypes
 
 
 class DomoticzPluginHelper:
@@ -52,7 +53,8 @@ class DomoticzPluginHelper:
             Unit, Command, Level))
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
-        self.d.Log("Notification: " + Name + "," + Subject + "," + Text + "," + Status + "," + str(Priority) + "," + Sound + "," + ImageFile)
+        self.d.Log("Notification: " + Name + "," + Subject + "," + Text +
+                   "," + Status + "," + str(Priority) + "," + Sound + "," + ImageFile)
 
     def onDisconnect(self, Connection):
         self.d.Log("onDisconnect called")
@@ -205,16 +207,6 @@ class DeviceParam:
         self.unit = unit
         self.nValue = nValue
         self.sValue = sValue
-
-# class DomoticzDeviceType:
-#     """Domoticz Device Type definition"""
-#     type_id: int
-#     type_name: str
-#     subtype_id: int
-#     subtype_name: str
-#     switchtype_id: int
-#     switchtype_name: str
-#     description: str
 
 
 def ParseCSV(strCSV: str):
