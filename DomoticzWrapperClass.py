@@ -325,16 +325,15 @@ class DomoticzWrapper:
 class DomoticzDevice:
     """A Domoticz Device"""
 
-    def __init__(self, Device):
-        self._Device = Device
-
-    def __init__(self, d: DomoticzWrapper,
-                 Name: str, Unit: int,
-                 DeviceType: DomoticzDeviceType,
+    def __init__(self, d: DomoticzWrapper = None,
+                 Name: str = None, Unit: int = None,
+                 DeviceType: DomoticzDeviceType = None,
+                 TypeName: DomoticzTypeName = None,
                  Image: int = None,
                  Options: Dict[str, str] = None,
                  Used: bool = False,
-                 DeviceID: str = None):
+                 DeviceID: str = None,
+                 Device=None):
         """Creator
 
         Arguments:
@@ -345,6 +344,7 @@ class DomoticzDevice:
 
             Keyword Arguments:
         - DeviceType {DomoticzDeviceType} -- DomoticzDeviceType
+        - TypeName {DomoticzTypeName} -- Common device types, this will set the values for Type, Subtype and Switchtype. (default: {None})
         - Image {int} -- Set the image number to be used with the device. Only required to override the default.
         All images available by JSON API call "/json.htm?type=custom_light_icons" (default: {None})
         - Options {Dict[str, str]} -- Set the Device Options field. A few devices, like Selector Switches, require additional details to be set in this field. It is a Python dictionary consisting of key values pairs, where the keys and values must be strings. See the example to the right. (default: {None})
@@ -352,7 +352,13 @@ class DomoticzDevice:
         - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is an eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
         Field type is Varchar(25) (default: {None})
         """
-        if DeviceType.subtype_id is None:
+        if DeviceType is None or DeviceType.type_id is None:
+            if Device is not None:
+                self._Device = Device
+            elif TypeName is not None:
+                self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
+                                                 Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+        elif DeviceType.subtype_id is None:
             self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                              Type=DeviceType.type_id,
                                              Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
@@ -365,67 +371,37 @@ class DomoticzDevice:
                                              Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
                                              Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
 
-    def __init__(self, d: DomoticzWrapper,
-                 Name: str, Unit: int,
-                 TypeName: DomoticzTypeName = None,
-                 Image: int = None,
-                 Options: Dict[str, str] = None,
-                 Used: bool = False,
-                 DeviceID: str = None):
-        """Creator
+    # def __init__(self, d: DomoticzWrapper,
+    #              Name: str, Unit: int,
+    #              Type: int = None, Subtype: int = None, Switchtype: int = None,
+    #              Image: int = None,
+    #              Options: Dict[str, str] = None,
+    #              Used: bool = False,
+    #              DeviceID: str = None):
+    #     """Creator
 
-        Arguments:
-        - Name {str} -- Is appended to the Hardware name to set the initial Domoticz Device name.
-        This should not be used in Python because it can be changed in the Web UI.
-        - Unit {int} -- Plugin index for the Device. This can not change and should be used reference Domoticz devices associated with the plugin. This is also the key for the Devices Dictionary that Domoticz prepopulates for the plugin.
-        Unit numbers must be less than 256.
+    #     Arguments:
+    #     - Name {str} -- Is appended to the Hardware name to set the initial Domoticz Device name.
+    #     This should not be used in Python because it can be changed in the Web UI.
+    #     - Unit {int} -- Plugin index for the Device. This can not change and should be used reference Domoticz devices associated with the plugin. This is also the key for the Devices Dictionary that Domoticz prepopulates for the plugin.
+    #     Unit numbers must be less than 256.
 
-            Keyword Arguments:
-        - TypeName {DomoticzTypeName} -- Common device types, this will set the values for Type, Subtype and Switchtype. (default: {None})
-        - Image {int} -- Set the image number to be used with the device. Only required to override the default.
-        All images available by JSON API call "/json.htm?type=custom_light_icons" (default: {None})
-        - Options {Dict[str, str]} -- Set the Device Options field. A few devices, like Selector Switches, require additional details to be set in this field. It is a Python dictionary consisting of key values pairs, where the keys and values must be strings. See the example to the right. (default: {None})
-        - Used {bool} -- Values
-        0 (default) Unused
-        1 Used.
-        Set the Device Used field. Used devices appear in the appropriate tab(s), unused devices appear only in the Devices page and must be manually marked as Used. (default: {False})
-        - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is and eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
-        Field type is Varchar(25) (default: {None})
-        """
-        self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
-                                         Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
-
-    def __init__(self, d: DomoticzWrapper,
-                 Name: str, Unit: int,
-                 Type: int = None, Subtype: int = None, Switchtype: int = None,
-                 Image: int = None,
-                 Options: Dict[str, str] = None,
-                 Used: bool = False,
-                 DeviceID: str = None):
-        """Creator
-
-        Arguments:
-        - Name {str} -- Is appended to the Hardware name to set the initial Domoticz Device name.
-        This should not be used in Python because it can be changed in the Web UI.
-        - Unit {int} -- Plugin index for the Device. This can not change and should be used reference Domoticz devices associated with the plugin. This is also the key for the Devices Dictionary that Domoticz prepopulates for the plugin.
-        Unit numbers must be less than 256.
-
-            Keyword Arguments:
-        - Type {int} -- Directly set the numeric Type value. Should only be used if the Device to be created is not supported by TypeName. (default: {None})
-        - Subtype {int} -- Directly set the numeric Subtype value. Should only be used if the Device to be created is not supported by TypeName. (default: {None})
-        - Switchtype {int} -- Directly set the numeric Switchtype value. Should only be used if the Device to be created is not supported by TypeName. (default: {None})
-        - Image {int} -- Set the image number to be used with the device. Only required to override the default.
-        All images available by JSON API call "/json.htm?type=custom_light_icons" (default: {None})
-        - Options {Dict[str, str]} -- Set the Device Options field. A few devices, like Selector Switches, require additional details to be set in this field. It is a Python dictionary consisting of key values pairs, where the keys and values must be strings. See the example to the right. (default: {None})
-        - Used {bool} -- Values
-        0 (default) Unused
-        1 Used.
-        Set the Device Used field. Used devices appear in the appropriate tab(s), unused devices appear only in the Devices page and must be manually marked as Used. (default: {False})
-        - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is and eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
-        Field type is Varchar(25) (default: {None})
-        """
-        self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, Type=Type, Subtype=Subtype,
-                                         Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+    #         Keyword Arguments:
+    #     - Type {int} -- Directly set the numeric Type value. Should only be used if the Device to be created is not supported by TypeName. (default: {None})
+    #     - Subtype {int} -- Directly set the numeric Subtype value. Should only be used if the Device to be created is not supported by TypeName. (default: {None})
+    #     - Switchtype {int} -- Directly set the numeric Switchtype value. Should only be used if the Device to be created is not supported by TypeName. (default: {None})
+    #     - Image {int} -- Set the image number to be used with the device. Only required to override the default.
+    #     All images available by JSON API call "/json.htm?type=custom_light_icons" (default: {None})
+    #     - Options {Dict[str, str]} -- Set the Device Options field. A few devices, like Selector Switches, require additional details to be set in this field. It is a Python dictionary consisting of key values pairs, where the keys and values must be strings. See the example to the right. (default: {None})
+    #     - Used {bool} -- Values
+    #     0 (default) Unused
+    #     1 Used.
+    #     Set the Device Used field. Used devices appear in the appropriate tab(s), unused devices appear only in the Devices page and must be manually marked as Used. (default: {False})
+    #     - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is and eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
+    #     Field type is Varchar(25) (default: {None})
+    #     """
+    #     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, Type=Type, Subtype=Subtype,
+    #                                      Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
 
     def __str__(self):
         return str(self._Device)
@@ -644,10 +620,7 @@ class DomoticzDevice:
 class DomoticzConnection:
     """Defines the connection type that will be used by the object"""
 
-    def __init__(self, Connection):
-        self._Connection = Connection
-
-    def __init__(self, d: DomoticzWrapper, Name: str, Transport: str, Protocol: str, Address: str, Port: str = None, Baud: int = 115200):
+    def __init__(self, d: DomoticzWrapper = None, Name: str = None, Transport: str = None, Protocol: str = None, Address: str = None, Port: str = None, Baud: int = 115200, Connection = None):
         """Defines the connection type that will be used by the object
 
         Arguments:
@@ -702,8 +675,11 @@ class DomoticzConnection:
                 Returns:
                     [type] -- [description]
         """
-        self._Connection = d.Domoticz.Connection(
-            Name=Name, Transport=Transport, Protocol=Protocol, Address=Address, Port=Port, Baud=Baud)
+        if Connection is not None:
+            self._Connection = Connection
+        else:
+            self._Connection = d.Domoticz.Connection(
+                Name=Name, Transport=Transport, Protocol=Protocol, Address=Address, Port=Port, Baud=Baud)
 
     def __str__(self):
         return str(self._Connection)
@@ -792,11 +768,11 @@ class DomoticzImage:
     described [here](https://www.domoticz.com/wiki/Custom_icons_for_webinterface#Creating_simple_home_made_icons).
     Resultant zip file(s) should be placed in the folder with the plugin itself"""
 
-    def __init__(self, Image):
-        self._Image = Image
-
-    def __init__(self, d: DomoticzWrapper, filename: str):
-        self._Image = d.Domoticz.Image(filename)
+    def __init__(self, d: DomoticzWrapper=None, filename: str=None, Image=None):
+        if Image is not None:
+            self._Image = Image
+        else:
+            self._Image = d.Domoticz.Image(filename)
 
     def __str__(self):
         return str(self._Image)
