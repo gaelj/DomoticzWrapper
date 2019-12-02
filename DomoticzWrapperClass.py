@@ -365,21 +365,21 @@ class DomoticzDevice:
             return
         elif DeviceType is None and TypeName is not None:
             self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
-                                                Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                             Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
             return
         elif DeviceType is DomoticzDeviceType:
             if DeviceType.subtype_id is None:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
-                                                Type=DeviceType.type_id,
-                                                Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                 Type=DeviceType.type_id,
+                                                 Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
             elif DeviceType.switchtype_id is None:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
-                                                Type=DeviceType.type_id, Subtype=DeviceType.subtype_id,
-                                                Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                 Type=DeviceType.type_id, Subtype=DeviceType.subtype_id,
+                                                 Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
             else:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
-                                                Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
-                                                Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                 Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
+                                                 Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
             return
         if d is not None:
             d.Log('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
@@ -858,33 +858,28 @@ class DomoticzImage:
 
 
 class DomoticzDeviceTypes:
-    @classmethod
     @property
-    def Lighting2(cls) -> DomoticzDeviceType:
+    def Lighting2() -> DomoticzDeviceType:
         """Behaves the same as Light/Switch, Preferable to use Type 244 instead"""
         return DomoticzDeviceType(17)
 
-    @classmethod
     @property
-    def Temp(cls) -> DomoticzDeviceType:
+    def Temp() -> DomoticzDeviceType:
         """Temperature sensor"""
         return DomoticzDeviceType(80, 5)
 
-    @classmethod
     @property
-    def Humidity(cls) -> DomoticzDeviceType:
+    def Humidity() -> DomoticzDeviceType:
         """Humidity sensor"""
         return DomoticzDeviceType(81, 1)
 
-    @classmethod
     @property
-    def TempHum(cls) -> DomoticzDeviceType:
+    def TempHum() -> DomoticzDeviceType:
         """Temperature + Humidity sensor"""
         return DomoticzDeviceType(82, 1)
 
-    @classmethod
     @property
-    def TempHumBaro_THB1(cls) -> DomoticzDeviceType:
+    def TempHumBaro_THB1() -> DomoticzDeviceType:
         """Temperature + Humidity + Barometer sensor
         Device.Update(nValue, sValue)
         nValue is always 0,
@@ -893,9 +888,8 @@ class DomoticzDeviceTypes:
         Forecast: 0 - None, 1 - Sunny, 2 - PartlyCloudy, 3 - Cloudy, 4 - Rain"""
         return DomoticzDeviceType(84, 1)
 
-    @classmethod
     @property
-    def TempHumBaro_THB2(cls) -> DomoticzDeviceType:
+    def TempHumBaro_THB2() -> DomoticzDeviceType:
         """Temperature + Humidity + Barometer sensor
         Device.Update(nValue, sValue)
         nValue is always 0,
@@ -904,9 +898,8 @@ class DomoticzDeviceTypes:
         Forecast: 0 - None, 1 - Sunny, 2 - PartlyCloudy, 3 - Cloudy, 4 - Rain"""
         return DomoticzDeviceType(84, 2)
 
-    @classmethod
     @property
-    def TempHumBaro_WeatherStation(cls) -> DomoticzDeviceType:
+    def TempHumBaro_WeatherStation() -> DomoticzDeviceType:
         """Temperature + Humidity + Barometer sensor
         Device.Update(nValue, sValue)
         nValue is always 0,
@@ -915,159 +908,133 @@ class DomoticzDeviceTypes:
         Forecast: 0 - None, 1 - Sunny, 2 - PartlyCloudy, 3 - Cloudy, 4 - Rain"""
         return DomoticzDeviceType(84, 16)
 
-    @classmethod
     @property
-    def Rain(cls) -> DomoticzDeviceType:
+    def Rain() -> DomoticzDeviceType:
         """Rain sensor (sValue: "<RainLastHour_mm*100>;<Rain_mm>", Rain_mm is everincreasing counter)"""
         return DomoticzDeviceType(85, 1)
 
-    @classmethod
     @property
-    def Wind(cls) -> DomoticzDeviceType:
+    def Wind() -> DomoticzDeviceType:
         """Wind sensor (sValue: "<WindDirDegrees>;<WindDirText>;<WindAveMeterPerSecond*10>;<WindGustMeterPerSecond*10>;<Temp_c>;<WindChill_c>")"""
         return DomoticzDeviceType(86, 1)
 
-    @classmethod
     @property
-    def UV(cls) -> DomoticzDeviceType:
+    def UV() -> DomoticzDeviceType:
         """UV sensor (sValue: "<UV>;<Temp>")"""
         return DomoticzDeviceType(87, 1)
 
-    @classmethod
     @property
-    def Ampere_3_Phase(cls) -> DomoticzDeviceType:
+    def Ampere_3_Phase() -> DomoticzDeviceType:
         """Ampere (3 Phase)"""
         return DomoticzDeviceType(89, 1)
 
-    @classmethod
     @property
-    def Scale(cls) -> DomoticzDeviceType:
+    def Scale() -> DomoticzDeviceType:
         """Weight"""
         return DomoticzDeviceType(93, 1)
 
-    @classmethod
     @property
-    def Counter(cls) -> DomoticzDeviceType:
+    def Counter() -> DomoticzDeviceType:
         """Counter"""
         return DomoticzDeviceType(113, 0)
 
-    @classmethod
     @property
-    def ColorSwitch_RGBW(cls) -> DomoticzDeviceType:
+    def ColorSwitch_RGBW() -> DomoticzDeviceType:
         """RGB + white, either RGB or white can be lit"""
         return DomoticzDeviceType(241, 1)
 
-    @classmethod
     @property
-    def ColorSwitch_RGB(cls) -> DomoticzDeviceType:
+    def ColorSwitch_RGB() -> DomoticzDeviceType:
         """RGB Color Switch"""
         return DomoticzDeviceType(241, 2)
 
-    @classmethod
     @property
-    def ColorSwitch_White(cls) -> DomoticzDeviceType:
+    def ColorSwitch_White() -> DomoticzDeviceType:
         """Monochrome White Color Switch"""
         return DomoticzDeviceType(241, 3)
 
-    @classmethod
     @property
-    def ColorSwitch_RGBWW(cls) -> DomoticzDeviceType:
+    def ColorSwitch_RGBWW() -> DomoticzDeviceType:
         """RGB + cold white + warm white, either RGB or white can be lit"""
         return DomoticzDeviceType(241, 4)
 
-    @classmethod
     @property
-    def ColorSwitch_RGBWZ(cls) -> DomoticzDeviceType:
+    def ColorSwitch_RGBWZ() -> DomoticzDeviceType:
         """Like RGBW, but allows combining RGB and white"""
         return DomoticzDeviceType(241, 6)
 
-    @classmethod
     @property
-    def ColorSwitch_RGBWWZ(cls) -> DomoticzDeviceType:
+    def ColorSwitch_RGBWWZ() -> DomoticzDeviceType:
         """Like RGBWW, but allows combining RGB and white"""
         return DomoticzDeviceType(241, 7)
 
-    @classmethod
     @property
-    def ColorSwitch_ColdWhiteWarmWhite(cls) -> DomoticzDeviceType:
+    def ColorSwitch_ColdWhiteWarmWhite() -> DomoticzDeviceType:
         """Cold white + Warm white"""
         return DomoticzDeviceType(241, 8)
 
-    @classmethod
     @property
-    def ThermostatSetpoint(cls) -> DomoticzDeviceType:
+    def ThermostatSetpoint() -> DomoticzDeviceType:
         """Thermostat Setpoint"""
         return DomoticzDeviceType(242, 1)
 
-    @classmethod
     @property
-    def General_Visibility(cls) -> DomoticzDeviceType:
+    def General_Visibility() -> DomoticzDeviceType:
         """Visibility"""
         return DomoticzDeviceType(243, 1)
 
-    @classmethod
     @property
-    def General_SolarRadiation(cls) -> DomoticzDeviceType:
+    def General_SolarRadiation() -> DomoticzDeviceType:
         """sValue: "float" """
         return DomoticzDeviceType(243, 2)
 
-    @classmethod
     @property
-    def General_SoilMoisture(cls) -> DomoticzDeviceType:
+    def General_SoilMoisture() -> DomoticzDeviceType:
         """Soil Moisture"""
         return DomoticzDeviceType(243, 3)
 
-    @classmethod
     @property
-    def General_LeafWetness(cls) -> DomoticzDeviceType:
+    def General_LeafWetness() -> DomoticzDeviceType:
         """Leaf Wetness"""
         return DomoticzDeviceType(243, 4)
 
-    @classmethod
     @property
-    def General_Percentage(cls) -> DomoticzDeviceType:
+    def General_Percentage() -> DomoticzDeviceType:
         """Percentage"""
         return DomoticzDeviceType(243, 6)
 
-    @classmethod
     @property
-    def General_Voltage(cls) -> DomoticzDeviceType:
+    def General_Voltage() -> DomoticzDeviceType:
         """Voltage"""
         return DomoticzDeviceType(243, 8)
 
-    @classmethod
     @property
-    def General_Pressure(cls) -> DomoticzDeviceType:
+    def General_Pressure() -> DomoticzDeviceType:
         """Pressure"""
         return DomoticzDeviceType(243, 9)
 
-    @classmethod
     @property
-    def General_Text(cls) -> DomoticzDeviceType:
+    def General_Text() -> DomoticzDeviceType:
         """Text"""
         return DomoticzDeviceType(243, 19)
 
-    @classmethod
     @property
-    def General_Alert(cls) -> DomoticzDeviceType:
+    def General_Alert() -> DomoticzDeviceType:
         """Alert"""
         return DomoticzDeviceType(243, 22)
 
-    @classmethod
     @property
-    def General_Ampere_1_Phase(cls) -> DomoticzDeviceType:
+    def General_Ampere_1_Phase() -> DomoticzDeviceType:
         """Ampere (1 Phase)"""
         return DomoticzDeviceType(243, 23)
 
-    @classmethod
     @property
-    def General_SoundLevel(cls) -> DomoticzDeviceType:
+    def General_SoundLevel() -> DomoticzDeviceType:
         """Sound Level"""
         return DomoticzDeviceType(243, 24)
 
-    @classmethod
     @property
-    def General_Barometer(cls) -> DomoticzDeviceType:
+    def General_Barometer() -> DomoticzDeviceType:
         """nValue: 0, sValue: "pressure;forecast"
         Forecast:
         0 - Stable
@@ -1078,39 +1045,33 @@ class DomoticzDeviceTypes:
         5 - Unknown """
         return DomoticzDeviceType(243, 26)
 
-    @classmethod
     @property
-    def General_Distance(cls) -> DomoticzDeviceType:
+    def General_Distance() -> DomoticzDeviceType:
         """Distance"""
         return DomoticzDeviceType(243, 27)
 
-    @classmethod
     @property
-    def General_CounterIncremental(cls) -> DomoticzDeviceType:
+    def General_CounterIncremental() -> DomoticzDeviceType:
         """Counter Incremental"""
         return DomoticzDeviceType(243, 28)
 
-    @classmethod
     @property
-    def General_kWh(cls) -> DomoticzDeviceType:
+    def General_kWh() -> DomoticzDeviceType:
         """Electric (Instant+Counter)"""
         return DomoticzDeviceType(243, 29)
 
-    @classmethod
     @property
-    def General_Waterflow(cls) -> DomoticzDeviceType:
+    def General_Waterflow() -> DomoticzDeviceType:
         """Waterflow"""
         return DomoticzDeviceType(243, 30)
 
-    @classmethod
     @property
-    def General_CustomSensor(cls) -> DomoticzDeviceType:
+    def General_CustomSensor() -> DomoticzDeviceType:
         """nValue: 0, sValue: "floatValue", Options: {'Custom': '1;<axisUnits>'}"""
         return DomoticzDeviceType(243, 31)
 
-    @classmethod
     @property
-    def General_ManagedCounter_Energy(cls) -> DomoticzDeviceType:
+    def General_ManagedCounter_Energy() -> DomoticzDeviceType:
         """nValue is always 0
 
         sValue must be a single value to update Dashboard, for instance "1234"
@@ -1118,9 +1079,8 @@ class DomoticzDeviceTypes:
         sValue must be a value followed by a space a date a space and a time ("%Y-%m-%d %H:%M:%S" format) to update last days history, for instance "1234 2019-10-03 14:55:00" """
         return DomoticzDeviceType(243, 33, 0)
 
-    @classmethod
     @property
-    def General_ManagedCounter_Gas(cls) -> DomoticzDeviceType:
+    def General_ManagedCounter_Gas() -> DomoticzDeviceType:
         """nValue is always 0
 
         sValue must be a single value to update Dashboard, for instance "1234"
@@ -1128,9 +1088,8 @@ class DomoticzDeviceTypes:
         sValue must be a value followed by a space a date a space and a time ("%Y-%m-%d %H:%M:%S" format) to update last days history, for instance "1234 2019-10-03 14:55:00" """
         return DomoticzDeviceType(243, 33, 1)
 
-    @classmethod
     @property
-    def General_ManagedCounter_Water(cls) -> DomoticzDeviceType:
+    def General_ManagedCounter_Water() -> DomoticzDeviceType:
         """nValue is always 0
 
         sValue must be a single value to update Dashboard, for instance "1234"
@@ -1138,9 +1097,8 @@ class DomoticzDeviceTypes:
         sValue must be a value followed by a space a date a space and a time ("%Y-%m-%d %H:%M:%S" format) to update last days history, for instance "1234 2019-10-03 14:55:00" """
         return DomoticzDeviceType(243, 33, 2)
 
-    @classmethod
     @property
-    def General_ManagedCounter_Counter(cls) -> DomoticzDeviceType:
+    def General_ManagedCounter_Counter() -> DomoticzDeviceType:
         """nValue is always 0
 
         sValue must be a single value to update Dashboard, for instance "1234"
@@ -1148,9 +1106,8 @@ class DomoticzDeviceTypes:
         sValue must be a value followed by a space a date a space and a time ("%Y-%m-%d %H:%M:%S" format) to update last days history, for instance "1234 2019-10-03 14:55:00" """
         return DomoticzDeviceType(243, 33, 3)
 
-    @classmethod
     @property
-    def General_ManagedCounter_EnergyGenerated(cls) -> DomoticzDeviceType:
+    def General_ManagedCounter_EnergyGenerated() -> DomoticzDeviceType:
         """nValue is always 0
 
         sValue must be a single value to update Dashboard, for instance "1234"
@@ -1158,9 +1115,8 @@ class DomoticzDeviceTypes:
         sValue must be a value followed by a space a date a space and a time ("%Y-%m-%d %H:%M:%S" format) to update last days history, for instance "1234 2019-10-03 14:55:00" """
         return DomoticzDeviceType(243, 33, 4)
 
-    @classmethod
     @property
-    def General_ManagedCounter_Time(cls) -> DomoticzDeviceType:
+    def General_ManagedCounter_Time() -> DomoticzDeviceType:
         """nValue is always 0
 
         sValue must be a single value to update Dashboard, for instance "1234"
@@ -1168,314 +1124,266 @@ class DomoticzDeviceTypes:
         sValue must be a value followed by a space a date a space and a time ("%Y-%m-%d %H:%M:%S" format) to update last days history, for instance "1234 2019-10-03 14:55:00" """
         return DomoticzDeviceType(243, 33, 5)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_OnOff(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_OnOff() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 0)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Doorbell(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Doorbell() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 1)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Contact(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Contact() -> DomoticzDeviceType:
         """Statuses:
         Open: nValue = 1
         Closed: nValue = 0"""
         return DomoticzDeviceType(244, 62, 2)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Blinds(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Blinds() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 3)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_X10_Siren(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_X10_Siren() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 4)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_SmokeDetector(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_SmokeDetector() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 5)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Blinds_Inverted(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Blinds_Inverted() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 6)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Dimmer(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Dimmer() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 7)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_MotionSensor(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_MotionSensor() -> DomoticzDeviceType:
         """Statuses:
         Motion: nValue = 1
         Off: nValue = 0"""
         return DomoticzDeviceType(244, 62, 8)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Push_On_Button(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Push_On_Button() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 9)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Push_Off_Button(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Push_Off_Button() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 10)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Door_Contact(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Door_Contact() -> DomoticzDeviceType:
         """Statuses:
         Open: nValue = 1
         Closed: nValue = 0"""
         return DomoticzDeviceType(244, 62, 11)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_DuskSensor(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_DuskSensor() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 12)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_BlindsPercentage(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_BlindsPercentage() -> DomoticzDeviceType:
         """Statuses:
         Closed: nValue = 1 and sValue = 100
         partially opened: nValue = 2 and sValue = 1-99
         Open: nValue = 0 and sValue = 0"""
         return DomoticzDeviceType(244, 62, 13)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Venetian_Blinds_US(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Venetian_Blinds_US() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 14)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Venetian_Blinds_EU(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Venetian_Blinds_EU() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 15)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Blinds_Percentage_Inverted(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Blinds_Percentage_Inverted() -> DomoticzDeviceType:
         """Statuses:
         Closed: nValue = 0 and sValue = 0
         partially opened: nValue = 2 and sValue = 1-99
         Open: nValue = 1 and sValue = 100"""
         return DomoticzDeviceType(244, 62, 16)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Media_Player(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Media_Player() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 17)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Selector(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Selector() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 18)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Door_Lock(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Door_Lock() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 62, 19)
 
-    @classmethod
     @property
-    def LightSwitch_Selector_Door_Lock_Inverted(cls) -> DomoticzDeviceType:
+    def LightSwitch_Selector_Door_Lock_Inverted() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 20)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_OnOff(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_OnOff() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 0)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Doorbell(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Doorbell() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 1)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Contact(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Contact() -> DomoticzDeviceType:
         """Statuses:
         Open: nValue = 1
         Closed: nValue = 0"""
         return DomoticzDeviceType(244, 73, 2)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Blinds(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Blinds() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 3)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_X10_Siren(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_X10_Siren() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 4)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_SmokeDetector(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_SmokeDetector() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 5)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Blinds_Inverted(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Blinds_Inverted() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 6)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Dimmer(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Dimmer() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 7)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_MotionSensor(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_MotionSensor() -> DomoticzDeviceType:
         """Statuses:
         Motion: nValue = 1
         Off: nValue = 0"""
         return DomoticzDeviceType(244, 73, 8)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Push_On_Button(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Push_On_Button() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 9)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Push_Off_Button(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Push_Off_Button() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 10)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Door_Contact(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Door_Contact() -> DomoticzDeviceType:
         """Statuses:
         Open: nValue = 1
         Closed: nValue = 0"""
         return DomoticzDeviceType(244, 73, 11)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_DuskSensor(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_DuskSensor() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 12)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_BlindsPercentage(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_BlindsPercentage() -> DomoticzDeviceType:
         """Statuses:
         Closed: nValue = 1 and sValue = 100
         partially opened: nValue = 2 and sValue = 1-99
         Open: nValue = 0 and sValue = 0"""
         return DomoticzDeviceType(244, 73, 13)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Venetian_Blinds_US(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Venetian_Blinds_US() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 14)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Venetian_Blinds_EU(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Venetian_Blinds_EU() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 15)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Blinds_Percentage_Inverted(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Blinds_Percentage_Inverted() -> DomoticzDeviceType:
         """Statuses:
         Closed: nValue = 0 and sValue = 0
         partially opened: nValue = 2 and sValue = 1-99
         Open: nValue = 1 and sValue = 100"""
         return DomoticzDeviceType(244, 73, 16)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Media_Player(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Media_Player() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 17)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Selector(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Selector() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 18)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Door_Lock(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Door_Lock() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 19)
 
-    @classmethod
     @property
-    def LightSwitch_Switch_Door_Lock_Inverted(cls) -> DomoticzDeviceType:
+    def LightSwitch_Switch_Door_Lock_Inverted() -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 20)
 
-    @classmethod
     @property
-    def Lux(cls) -> DomoticzDeviceType:
+    def Lux() -> DomoticzDeviceType:
         """Illumination (sValue: "float")"""
         return DomoticzDeviceType(246, 1)
 
-    @classmethod
     @property
-    def TempBaro(cls) -> DomoticzDeviceType:
+    def TempBaro() -> DomoticzDeviceType:
         """Temperature + Barometer sensor"""
         return DomoticzDeviceType(247, 1)
 
-    @classmethod
     @property
-    def ElectricUsage(cls) -> DomoticzDeviceType:
+    def ElectricUsage() -> DomoticzDeviceType:
         """Electric Usage"""
         return DomoticzDeviceType(248, 1)
 
-    @classmethod
     @property
-    def AirQuality(cls) -> DomoticzDeviceType:
+    def AirQuality() -> DomoticzDeviceType:
         """Air Quality"""
         return DomoticzDeviceType(249, 1)
 
-    @classmethod
     @property
-    def P1_SmartMeter_Energy(cls) -> DomoticzDeviceType:
+    def P1_SmartMeter_Energy() -> DomoticzDeviceType:
         """P1 SmartMeter: Energy"""
         return DomoticzDeviceType(250, 1)
 
-    @classmethod
     @property
-    def P1_SmartMeter_Gas(cls) -> DomoticzDeviceType:
+    def P1_SmartMeter_Gas() -> DomoticzDeviceType:
         """P1 SmartMeter: Gas"""
         return DomoticzDeviceType(251, 2)
