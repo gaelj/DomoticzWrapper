@@ -340,7 +340,6 @@ class DomoticzDevice:
                  Used: bool = False,
                  Options: Dict[str, str] = None,
                  Image: int = None,
-                 DeviceID: str = None,
                  Device=None):
         """Creator
 
@@ -366,39 +365,39 @@ class DomoticzDevice:
         elif DeviceType is None and TypeName is not None:
             if Image is None:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
-                                                Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                Options=Options, Used=1 if Used else 0)
             else:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
-                                                Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                Image=Image, Options=Options, Used=1 if Used else 0)
             return
         elif isinstance(DeviceType, DomoticzDeviceType):
             if DeviceType.subtype_id is None:
                 if Image is None:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id,
-                                                    Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                    Options=Options, Used=1 if Used else 0)
                 else:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id,
-                                                    Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                    Image=Image, Options=Options, Used=1 if Used else 0)
             elif DeviceType.switchtype_id is None:
                 if Image is None:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id, Subtype=DeviceType.subtype_id,
-                                                    Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                    Options=Options, Used=1 if Used else 0)
                 else:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id, Subtype=DeviceType.subtype_id,
-                                                    Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                    Image=Image, Options=Options, Used=1 if Used else 0)
             else:
                 if Image is None:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
-                                                    Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                    Options=Options, Used=1 if Used else 0)
                 else:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
-                                                    Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+                                                    Image=Image, Options=Options, Used=1 if Used else 0)
             return
         if d is not None:
             d.Log('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
@@ -434,7 +433,7 @@ class DomoticzDevice:
     #     Field type is Varchar(25) (default: {None})
     #     """
     #     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, Type=Type, Subtype=Subtype,
-    #                                      Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+    #                                      Switchtype=Switchtype, Image=Image, Options=Options, Used=1 if Used else 0)
 
     def __str__(self):
         return str(self._Device)
