@@ -19,7 +19,7 @@ from distutils.version import LooseVersion
 
 
 from DomoticzWrapperClass import \
-    DeviceParam, DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
+    DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
     DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage
 
 
