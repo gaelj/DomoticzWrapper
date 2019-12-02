@@ -18,7 +18,7 @@ import itertools
 from distutils.version import LooseVersion
 
 
-from DomoticzWrapper import \
+from DomoticzWrapperClass import \
     DeviceParam, DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
     DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage
 
