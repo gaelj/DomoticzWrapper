@@ -38,8 +38,8 @@ class DomoticzDebugLevel(IntEnum):
     DumpData = 64
     DebugMessageQueue = 128
 
-
-class DomoticzPluginParameter(Enum):
+@dataclass
+class DomoticzPluginParameters:
     """Domoticz parameter values
 
     Arguments:
@@ -59,21 +59,26 @@ class DomoticzPluginParameter(Enum):
     - Enum {Mode6} -- General Parameter 6
     - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
     """
-    Key = 'Key'
-    HomeFolder = 'HomeFolder'
-    Author = 'Author'
-    Version = 'Version'
-    Address = 'Address'
-    Port = 'Port'
-    Username = 'Username'
-    Password = 'Password'
-    Mode1 = 'Mode1'
-    Mode2 = 'Mode2'
-    Mode3 = 'Mode3'
-    Mode4 = 'Mode4'
-    Mode5 = 'Mode5'
-    Mode6 = 'Mode6'
-    SerialPort = 'SerialPort'
+    Key: str
+    HomeFolder: str
+    Author: str
+    Version: str
+    Address: str
+    Port: str
+    Username: str
+    Password: str
+    Mode1: str
+    Mode2: str
+    Mode3: str
+    Mode4: str
+    Mode5: str
+    Mode6: str
+    SerialPort: str
+
+    def __init__(self, parameters: Dict[str, str]):
+        for x in parameters:
+            if x in self:
+                self[x] = parameters[x]
 
 
 class DomoticzTypeName(Enum):
@@ -138,13 +143,18 @@ class DomoticzWrapper:
         return self.__Settings
 
     @property
-    def Parameters(self) -> Dict[DomoticzPluginParameter, str]:
+    def ParametersDict(self) -> Dict[str, str]:
         """These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
 
         Returns:
-            Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
+            Dict[str, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
         """
-        return dict([(DomoticzPluginParameter(k), self.__Parameters[k]) for k in self.__Parameters])
+        # return dict([(str(k), self.__Parameters[k]) for k in self.__Parameters])
+        return self.__Parameters
+
+    @property
+    def Parameters(self) -> DomoticzPluginParameters:
+        return DomoticzPluginParameters(self.__Parameters)
 
     @property
     def Devices(self) -> Dict[int, DomoticzDevice]:
@@ -300,15 +310,15 @@ class DomoticzWrapper:
     def DomoticzAPI(self, APICall: str):
         resultJson = None
         url = "http://{}:{}/json.htm?{}".format(
-            self.Parameters[DomoticzPluginParameter.Address], self.Parameters[DomoticzPluginParameter.Port], parse.quote(APICall, safe="&="))
+            self.Parameters.Address, self.Parameters.Port, parse.quote(APICall, safe="&="))
         self.Debug("Calling domoticz API: {}".format(url))
         try:
             req = request.Request(url)
-            if self.Parameters[DomoticzPluginParameter.Username] != "":
+            if self.Parameters.Username != "":
                 self.Debug("Add authentication for user {}".format(
-                    self.Parameters[DomoticzPluginParameter.Username]))
+                    self.Parameters.Username))
                 credentials = ('%s:%s' %
-                               (self.Parameters[DomoticzPluginParameter.Username], self.Parameters[DomoticzPluginParameter.Password]))
+                               (self.Parameters.Username, self.Parameters.Password))
                 encoded_credentials = base64.b64encode(
                     credentials.encode('ascii'))
                 req.add_header('Authorization', 'Basic %s' %
@@ -346,24 +356,6 @@ class DomoticzWrapper:
             self.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(
                 name, value, default))
         return param
-
-    # Generic helper functions
-
-    def DumpConfigToLog(self):
-        for x in self.Parameters:
-            parameter = self.Parameters[x]
-            if parameter != "":
-                self.Debug("'" + str(x.name) + "':'" + str(parameter) + "'")
-        self.Debug("Device count: " + str(len(self.Devices)))
-        for x in self.Devices:
-            device = self.Devices[x]
-            self.Debug("Device:           " + str(x.name) + " - " + str(device))
-            self.Debug("Device ID:       '" + str(device.ID) + "'")
-            self.Debug("Device Name:     '" + device.Name + "'")
-            self.Debug("Device nValue:    " + str(device.nValue))
-            self.Debug("Device sValue:   '" + device.sValue + "'")
-            self.Debug("Device LastLevel: " + str(device.LastLevel))
-        return
 
 
 class DomoticzDevice:
