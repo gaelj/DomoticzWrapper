@@ -360,14 +360,13 @@ class DomoticzDevice:
         - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is an eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
         Field type is Varchar(25) (default: {None})
         """
-        if DeviceType is None:
-            if Device is not None:
-                self._Device = Device
-                return
-            elif TypeName is not None:
-                self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
-                                                 Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
-                return
+        if Device is not None:
+            self._Device = Device
+            return
+        elif DeviceType is None and TypeName is not None:
+            self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
+                                                Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
+            return
         elif DeviceType is DomoticzDeviceType:
             if DeviceType.subtype_id is None:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
@@ -382,7 +381,7 @@ class DomoticzDevice:
                                                 Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
                                                 Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
             return
-        raise Exception('Unexpected constructor arguments')
+        raise Exception('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
 
     # def __init__(self, d: DomoticzWrapper,
     #              Name: str, Unit: int,
