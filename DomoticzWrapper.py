@@ -79,6 +79,48 @@ class DomoticzDebugLevel(IntEnum):
 #     Mode6 = 'Mode6'
 #     SerialPort = 'SerialPort'
 
+@dataclass
+class DomoticzPluginParameters:
+    """Domoticz parameter values
+
+    Arguments:
+    - Enum {Key} -- Unique short name for the plugin, matches python filename.
+    - Enum {HomeFolder} -- Folder or directory where the plugin was run from.
+    - Enum {Author} -- Plugin Author.
+    - Enum {Version} -- Plugin version.
+    - Enum {Address} -- IP Address, used during connection.
+    - Enum {Port} -- IP Port, used during connection.
+    - Enum {Username} -- Username.
+    - Enum {Password} -- Password.
+    - Enum {Mode1} -- General Parameter 1
+    - Enum {Mode2} -- General Parameter 2
+    - Enum {Mode3} -- General Parameter 3
+    - Enum {Mode4} -- General Parameter 4
+    - Enum {Mode5} -- General Parameter 5
+    - Enum {Mode6} -- General Parameter 6
+    - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
+    """
+    Key: str
+    HomeFolder: str
+    Author: str
+    Version: str
+    Address: str
+    Port: str
+    Username: str
+    Password: str
+    Mode1: str
+    Mode2: str
+    Mode3: str
+    Mode4: str
+    Mode5: str
+    Mode6: str
+    SerialPort: str
+
+    def __init__(self, parameters: Dict[str, str]):
+        for x in parameters:
+            if x in self:
+                self[x] = parameters[x]
+
 
 class DomoticzTypeName(Enum):
     AirQuality = "AirQuality"
@@ -158,13 +200,18 @@ class DomoticzWrapper:
         return self.__Settings
 
     @property
-    def Parameters(self) -> Dict[DomoticzPluginParameter, str]:
+    def ParametersDict(self) -> Dict[str, str]:
         """These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
 
         Returns:
-            Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
+            Dict[str, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
         """
-        return dict([(DomoticzPluginParameter(k), self.__Parameters[k]) for k in self.__Parameters])
+        # return dict([(str(k), self.__Parameters[k]) for k in self.__Parameters])
+        return self.__Parameters
+
+    @property
+    def Parameters(self) -> DomoticzPluginParameters:
+        return DomoticzPluginParameters(self.__Parameters)
 
     @property
     def Devices(self) -> Dict[int, DomoticzDevice]:
