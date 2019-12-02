@@ -4,14 +4,8 @@ Based on information in https://www.domoticz.com/wiki/Developing_a_Python_plugin
 
 from enum import Enum, IntEnum
 from typing import List, Dict
-import json
-import urllib.parse as parse
-import urllib.request as request
 from datetime import datetime, timedelta
 import time
-import base64
-import itertools
-from distutils.version import LooseVersion
 
 
 class DomoticzDebugLevel(IntEnum):
@@ -39,51 +33,52 @@ class DomoticzDebugLevel(IntEnum):
     DebugMessageQueue = 128
 
 
-class DomoticzPluginParameter(Enum):
-    """Domoticz parameter values
+# class DomoticzPluginParameter(Enum):
+#     """Domoticz parameter values
 
-    Arguments:
-    - Enum {Key} -- Unique short name for the plugin, matches python filename.
-    - Enum {HomeFolder} -- Folder or directory where the plugin was run from.
-    - Enum {Author} -- Plugin Author.
-    - Enum {Version} -- Plugin version.
-    - Enum {Address} -- IP Address, used during connection.
-    - Enum {Port} -- IP Port, used during connection.
-    - Enum {Username} -- Username.
-    - Enum {Password} -- Password.
-    - Enum {Mode1} -- General Parameter 1
-    - Enum {Mode2} -- General Parameter 2
-    - Enum {Mode3} -- General Parameter 3
-    - Enum {Mode4} -- General Parameter 4
-    - Enum {Mode5} -- General Parameter 5
-    - Enum {Mode6} -- General Parameter 6
-    - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
-    """
-    DomoticzVersion = 'DomoticzVersion'
-    UserDataFolder = 'UserDataFolder'
-    StartupFolder = 'StartupFolder'
-    DomoticzHash = 'DomoticzHash'
-    DomoticzBuildTime = 'DomoticzBuildTime'
-    Name = 'Name'
-    Language = 'Language'
-    HardwareID = 'HardwareID'
-    WebRoot = 'WebRoot'
-    Database = 'Database'
-    Key = 'Key'
-    HomeFolder = 'HomeFolder'
-    Author = 'Author'
-    Version = 'Version'
-    Address = 'Address'
-    Port = 'Port'
-    Username = 'Username'
-    Password = 'Password'
-    Mode1 = 'Mode1'
-    Mode2 = 'Mode2'
-    Mode3 = 'Mode3'
-    Mode4 = 'Mode4'
-    Mode5 = 'Mode5'
-    Mode6 = 'Mode6'
-    SerialPort = 'SerialPort'
+#     Arguments:
+#     - Enum {Key} -- Unique short name for the plugin, matches python filename.
+#     - Enum {HomeFolder} -- Folder or directory where the plugin was run from.
+#     - Enum {Author} -- Plugin Author.
+#     - Enum {Version} -- Plugin version.
+#     - Enum {Address} -- IP Address, used during connection.
+#     - Enum {Port} -- IP Port, used during connection.
+#     - Enum {Username} -- Username.
+#     - Enum {Password} -- Password.
+#     - Enum {Mode1} -- General Parameter 1
+#     - Enum {Mode2} -- General Parameter 2
+#     - Enum {Mode3} -- General Parameter 3
+#     - Enum {Mode4} -- General Parameter 4
+#     - Enum {Mode5} -- General Parameter 5
+#     - Enum {Mode6} -- General Parameter 6
+#     - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
+#     """
+#     DomoticzVersion = 'DomoticzVersion'
+#     UserDataFolder = 'UserDataFolder'
+#     StartupFolder = 'StartupFolder'
+#     DomoticzHash = 'DomoticzHash'
+#     DomoticzBuildTime = 'DomoticzBuildTime'
+#     Name = 'Name'
+#     Language = 'Language'
+#     HardwareID = 'HardwareID'
+#     WebRoot = 'WebRoot'
+#     Database = 'Database'
+#     Key = 'Key'
+#     HomeFolder = 'HomeFolder'
+#     Author = 'Author'
+#     Version = 'Version'
+#     Address = 'Address'
+#     Port = 'Port'
+#     Username = 'Username'
+#     Password = 'Password'
+#     Mode1 = 'Mode1'
+#     Mode2 = 'Mode2'
+#     Mode3 = 'Mode3'
+#     Mode4 = 'Mode4'
+#     Mode5 = 'Mode5'
+#     Mode6 = 'Mode6'
+#     SerialPort = 'SerialPort'
+
 
 class DomoticzTypeName(Enum):
     AirQuality = "AirQuality"
@@ -319,76 +314,6 @@ class DomoticzWrapper:
             Dict[str, str] -- Resulting configuration object
         """
         return self.__Domoticz.Configuration(val)
-
-    # Plugin utility functions ---------------------------------------------------
-
-    def DomoticzAPI(self, APICall: str):
-        resultJson = None
-        url = "http://{}:{}/json.htm?{}".format(
-            self.Parameters[DomoticzPluginParameter.Address], self.Parameters[DomoticzPluginParameter.Port], parse.quote(APICall, safe="&="))
-        self.Debug("Calling domoticz API: {}".format(url))
-        try:
-            req = request.Request(url)
-            if self.Parameters[DomoticzPluginParameter.Username] != "":
-                self.Debug("Add authentication for user {}".format(
-                    self.Parameters[DomoticzPluginParameter.Username]))
-                credentials = ('%s:%s' %
-                               (self.Parameters[DomoticzPluginParameter.Username], self.Parameters[DomoticzPluginParameter.Password]))
-                encoded_credentials = base64.b64encode(
-                    credentials.encode('ascii'))
-                req.add_header('Authorization', 'Basic %s' %
-                               encoded_credentials.decode("ascii"))
-
-            response = request.urlopen(req)
-            if response.status == 200:
-                resultJson = json.loads(response.read().decode('utf-8'))
-                if resultJson["status"] != "OK":
-                    self.Error("Domoticz API returned an error: status = {}".format(
-                        resultJson["status"]))
-                    resultJson = None
-            else:
-                self.Error(
-                    "Domoticz API: http error = {}".format(response.status))
-        except:
-            self.Error("Error calling '{}'".format(url))
-        return resultJson
-
-    def CheckParam(self, name: str, value, default: int):
-        """Check that the value is an integer. If not, log an error and use the default value
-
-        Arguments:
-            name {str} -- The name to log
-            value {any} -- The value to check
-            default {int} -- Default value to use in case of error
-
-        Returns:
-            int -- The value if int or default value
-        """
-        try:
-            param = int(value)
-        except ValueError:
-            param = default
-            self.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(
-                name, value, default))
-        return param
-
-    # Generic helper functions
-
-    def DumpConfigToLog(self):
-        for x in self.Parameters:
-            parameter = self.Parameters[x]
-            if parameter != "":
-                self.Debug("'" + str(x.name) + "':'" + str(parameter) + "'")
-        self.Debug("Device count: " + str(len(self.Devices)))
-        for x in self.Devices:
-            device = self.Devices[x]
-            self.Debug("Device:           " + str(x.name) + " - " + str(device))
-            self.Debug("Device ID:       '" + str(device.ID) + "'")
-            self.Debug("Device Name:     '" + device.Name + "'")
-            self.Debug("Device nValue:    " + str(device.nValue))
-            self.Debug("Device sValue:   '" + device.sValue + "'")
-            self.Debug("Device LastLevel: " + str(device.LastLevel))
-        return
 
 
 class DomoticzDevice:
@@ -883,14 +808,3 @@ class DeviceParam:
 #     switchtype_id: int
 #     switchtype_name: str
 #     description: str
-
-def parseCSV(strCSV: str):
-    listValues = []
-    for value in strCSV.split(","):
-        try:
-            val = int(value.strip())
-        except:
-            pass
-        else:
-            listValues.append(val)
-    return listValues
