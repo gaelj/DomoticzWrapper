@@ -209,7 +209,7 @@ class DomoticzPluginHelper:
         """Called for each device during onStart. Creates devices if needed"""
         if Unit not in self.d.Devices:
             DomoticzDevice(self.d, Name=Name, Unit=Unit, DeviceType=DeviceType,
-                           Image=Image, Options=Options, Used=Used).Create()
+                           Image=Image, Options=Options, Used=1 if Used else 0).Create()
             self.d.Devices[Unit].Update(
                 nValue=defaultNValue, sValue=defaultSValue)
 
