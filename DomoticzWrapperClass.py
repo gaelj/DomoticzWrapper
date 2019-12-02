@@ -424,7 +424,7 @@ class DomoticzDevice:
         """Creates the device in Domoticz from the object."""
         self._Device.Create()
 
-    def Update(self, nValue: float, sValue: str, Image: int = None, SignalLevel: int = 12, BatteryLevel: int = 255, Options: Dict[str, str] = {}, TimedOut: int = 0, Name: str = None, TypeName: DomoticzTypeName = None, Type: int = None, Subtype: int = None, Switchtype: int = None, Used: bool = False, Description: str = None, Color: str = None, SuppressTriggers: bool = False):
+    def Update(self, nValue: float, sValue: str, **kvargs):
         """Updates the current values in Domoticz.
 
         Arguments:
@@ -449,8 +449,7 @@ class DomoticzDevice:
         - Color {str} -- Current color, see documentation of onCommand callback for details on the format.  (default: {None})
         - SuppressTriggers {bool} -- Default: False Boolean flag that allows device attributes to be updated without notifications, scene or MQTT, event triggers. nValue and sValue are not written to the database and will be overwritten with current database values.  (default: {False})
         """
-        self._Device.Update(nValue, sValue, Image, SignalLevel, BatteryLevel, Options, TimedOut, Name,
-                            TypeName.value, Type, Subtype, Switchtype, 1 if Used else 0, Description, Color, SuppressTriggers)
+        self._Device.Update(nValue, sValue, **kvargs)
 
     def Delete(self):
         """Deletes the device in Domoticz"""
