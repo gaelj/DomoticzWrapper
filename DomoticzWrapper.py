@@ -4,14 +4,8 @@ Based on information in https://www.domoticz.com/wiki/Developing_a_Python_plugin
 
 from enum import Enum, IntEnum
 from typing import List, Dict
-import json
-import urllib.parse as parse
-import urllib.request as request
 from datetime import datetime, timedelta
 import time
-import base64
-import itertools
-from distutils.version import LooseVersion
 
 
 class DomoticzDebugLevel(IntEnum):
@@ -38,57 +32,62 @@ class DomoticzDebugLevel(IntEnum):
     DumpData = 64
     DebugMessageQueue = 128
 
-@dataclass
-class DomoticzPluginParameters:
-    """Domoticz parameter values
 
-    Arguments:
-    - Enum {Key} -- Unique short name for the plugin, matches python filename.
-    - Enum {HomeFolder} -- Folder or directory where the plugin was run from.
-    - Enum {Author} -- Plugin Author.
-    - Enum {Version} -- Plugin version.
-    - Enum {Address} -- IP Address, used during connection.
-    - Enum {Port} -- IP Port, used during connection.
-    - Enum {Username} -- Username.
-    - Enum {Password} -- Password.
-    - Enum {Mode1} -- General Parameter 1
-    - Enum {Mode2} -- General Parameter 2
-    - Enum {Mode3} -- General Parameter 3
-    - Enum {Mode4} -- General Parameter 4
-    - Enum {Mode5} -- General Parameter 5
-    - Enum {Mode6} -- General Parameter 6
-    - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
-    """
-    Key: str
-    HomeFolder: str
-    Author: str
-    Version: str
-    Address: str
-    Port: str
-    Username: str
-    Password: str
-    Mode1: str
-    Mode2: str
-    Mode3: str
-    Mode4: str
-    Mode5: str
-    Mode6: str
-    SerialPort: str
+# class DomoticzPluginParameter(Enum):
+#     """Domoticz parameter values
 
-    def __init__(self, parameters: Dict[str, str]):
-        for x in parameters:
-            if x in self:
-                self[x] = parameters[x]
+#     Arguments:
+#     - Enum {Key} -- Unique short name for the plugin, matches python filename.
+#     - Enum {HomeFolder} -- Folder or directory where the plugin was run from.
+#     - Enum {Author} -- Plugin Author.
+#     - Enum {Version} -- Plugin version.
+#     - Enum {Address} -- IP Address, used during connection.
+#     - Enum {Port} -- IP Port, used during connection.
+#     - Enum {Username} -- Username.
+#     - Enum {Password} -- Password.
+#     - Enum {Mode1} -- General Parameter 1
+#     - Enum {Mode2} -- General Parameter 2
+#     - Enum {Mode3} -- General Parameter 3
+#     - Enum {Mode4} -- General Parameter 4
+#     - Enum {Mode5} -- General Parameter 5
+#     - Enum {Mode6} -- General Parameter 6
+#     - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
+#     """
+#     DomoticzVersion = 'DomoticzVersion'
+#     UserDataFolder = 'UserDataFolder'
+#     StartupFolder = 'StartupFolder'
+#     DomoticzHash = 'DomoticzHash'
+#     DomoticzBuildTime = 'DomoticzBuildTime'
+#     Name = 'Name'
+#     Language = 'Language'
+#     HardwareID = 'HardwareID'
+#     WebRoot = 'WebRoot'
+#     Database = 'Database'
+#     Key = 'Key'
+#     HomeFolder = 'HomeFolder'
+#     Author = 'Author'
+#     Version = 'Version'
+#     Address = 'Address'
+#     Port = 'Port'
+#     Username = 'Username'
+#     Password = 'Password'
+#     Mode1 = 'Mode1'
+#     Mode2 = 'Mode2'
+#     Mode3 = 'Mode3'
+#     Mode4 = 'Mode4'
+#     Mode5 = 'Mode5'
+#     Mode6 = 'Mode6'
+#     SerialPort = 'SerialPort'
 
 
 class DomoticzTypeName(Enum):
-    AirQuality = "Air Quality"
+    AirQuality = "AirQuality"
     Alert = "Alert"
     Barometer = "Barometer"
-    CounterIncremental = "Counter Incremental"
+    CounterIncremental = "CounterIncremental"
     Contact = "Contact"
-    CurrentAmpere = "Current/Ampere"
-    CurrentSingle = "Current (Single)"
+    CurrentAmpere = "CurrentAmpere"
+    CurrentSingle = "CurrentSingle"
     Custom = "Custom"
     Dimmer = "Dimmer"
     Distance = "Distance"
@@ -96,21 +95,21 @@ class DomoticzTypeName(Enum):
     Humidity = "Humidity"
     Illumination = "Illumination"
     kWh = "kWh"
-    LeafWetness = "Leaf Wetness"
+    LeafWetness = "LeafWetness"
     Motion = "Motion"
     Percentage = "Percentage"
-    PushOn = "Push On"
-    PushOff = "Push Off"
+    PushOn = "PushOn"
+    PushOff = "PushOff"
     Pressure = "Pressure"
     Rain = "Rain"
-    SelectorSwitch = "Selector Switch"
-    SoilMoisture = "Soil Moisture"
-    SolarRadiation = "Solar Radiation"
-    SoundLevel = "Sound Level"
+    SelectorSwitch = "SelectorSwitch"
+    SoilMoisture = "SoilMoisture"
+    SolarRadiation = "SolarRadiation"
+    SoundLevel = "SoundLevel"
     Switch = "Switch"
     Temperature = "Temperature"
-    TempHum = "Temp+Hum"
-    TempHumBaro = "Temp+Hum+Baro"
+    TempHum = "TempHum"
+    TempHumBaro = "TempHumBaro"
     Text = "Text"
     Usage = "Usage"
     UV = "UV"
@@ -118,7 +117,23 @@ class DomoticzTypeName(Enum):
     Voltage = "Voltage"
     Waterflow = "Waterflow"
     Wind = "Wind"
-    WindTempChill = "Wind+Temp+Chill"
+    WindTempChill = "WindTempChill"
+
+
+class DomoticzDevice:
+    pass
+
+
+class DomoticzConnection:
+    pass
+
+
+class DomoticzImage:
+    pass
+
+
+class DeviceParam:
+    pass
 
 
 class DomoticzWrapper:
@@ -143,18 +158,13 @@ class DomoticzWrapper:
         return self.__Settings
 
     @property
-    def ParametersDict(self) -> Dict[str, str]:
+    def Parameters(self) -> Dict[DomoticzPluginParameter, str]:
         """These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
 
         Returns:
-            Dict[str, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
+            Dict[DomoticzPluginParameter, str] -- These are always available and remain static for the lifetime of the plugin. They can be accessed by name for example: Parameters["SerialPort"]
         """
-        # return dict([(str(k), self.__Parameters[k]) for k in self.__Parameters])
-        return self.__Parameters
-
-    @property
-    def Parameters(self) -> DomoticzPluginParameters:
-        return DomoticzPluginParameters(self.__Parameters)
+        return dict([(DomoticzPluginParameter(k), self.__Parameters[k]) for k in self.__Parameters])
 
     @property
     def Devices(self) -> Dict[int, DomoticzDevice]:
@@ -237,12 +247,12 @@ class DomoticzWrapper:
         """
         self.__Domoticz.Heartbeat(val)
 
-    def Notifier(self, name: string):
+    def Notifier(self, name: str):
         """Informs the plugin framework that the plugin's external hardware can consume Domoticz Notifications.
         When the plugin is active the supplied Name will appear as an additional target for Notifications in the standard Domoticz device notification editing page. The plugin framework will then call the onNotification callback when a notifiable event occurs.
 
         Arguments:
-            name {string} -- Domoticz Notifications target name
+            name {str} -- Domoticz Notifications target name
         """
         self.__Domoticz.Notifier(name)
 
@@ -304,58 +314,6 @@ class DomoticzWrapper:
             Dict[str, str] -- Resulting configuration object
         """
         return self.__Domoticz.Configuration(val)
-
-    # Plugin utility functions ---------------------------------------------------
-
-    def DomoticzAPI(self, APICall: str):
-        resultJson = None
-        url = "http://{}:{}/json.htm?{}".format(
-            self.Parameters.Address, self.Parameters.Port, parse.quote(APICall, safe="&="))
-        self.Debug("Calling domoticz API: {}".format(url))
-        try:
-            req = request.Request(url)
-            if self.Parameters.Username != "":
-                self.Debug("Add authentication for user {}".format(
-                    self.Parameters.Username))
-                credentials = ('%s:%s' %
-                               (self.Parameters.Username, self.Parameters.Password))
-                encoded_credentials = base64.b64encode(
-                    credentials.encode('ascii'))
-                req.add_header('Authorization', 'Basic %s' %
-                               encoded_credentials.decode("ascii"))
-
-            response = request.urlopen(req)
-            if response.status == 200:
-                resultJson = json.loads(response.read().decode('utf-8'))
-                if resultJson["status"] != "OK":
-                    self.Error("Domoticz API returned an error: status = {}".format(
-                        resultJson["status"]))
-                    resultJson = None
-            else:
-                self.Error(
-                    "Domoticz API: http error = {}".format(response.status))
-        except:
-            self.Error("Error calling '{}'".format(url))
-        return resultJson
-
-    def CheckParam(self, name: str, value, default: int):
-        """Check that the value is an integer. If not, log an error and use the default value
-
-        Arguments:
-            name {str} -- The name to log
-            value {any} -- The value to check
-            default {int} -- Default value to use in case of error
-
-        Returns:
-            int -- The value if int or default value
-        """
-        try:
-            param = int(value)
-        except ValueError:
-            param = default
-            self.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(
-                name, value, default))
-        return param
 
 
 class DomoticzDevice:
@@ -850,14 +808,3 @@ class DeviceParam:
 #     switchtype_id: int
 #     switchtype_name: str
 #     description: str
-
-def parseCSV(strCSV: str):
-    listValues = []
-    for value in strCSV.split(","):
-        try:
-            val = int(value.strip())
-        except:
-            pass
-        else:
-            listValues.append(val)
-    return listValues
