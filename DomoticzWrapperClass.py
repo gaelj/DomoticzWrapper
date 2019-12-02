@@ -367,7 +367,7 @@ class DomoticzDevice:
             self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
                                              Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
             return
-        elif DeviceType is DomoticzDeviceType:
+        elif DeviceType is DomoticzWrapperClass.DomoticzDeviceType:
             if DeviceType.subtype_id is None:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                  Type=DeviceType.type_id,
