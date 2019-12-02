@@ -130,7 +130,15 @@ class DomoticzImage:
 
 
 class DomoticzDeviceType:
-    pass
+    """Domoticz Device Type definition"""
+
+    def __init__(self,
+                 type_id: int,
+                 subtype_id: int = None,
+                 switchtype_id: int = None):
+        self.type_id = type_id
+        self.subtype_id = subtype_id
+        self.switchtype_id = switchtype_id
 
 
 class DomoticzDeviceTypes:
@@ -352,7 +360,7 @@ class DomoticzDevice:
         - DeviceID {str} -- Set the DeviceID to be used with the device. Only required to override the default which is an eight digit number dervice from the HardwareID and the Unit number in the format "000H000U".
         Field type is Varchar(25) (default: {None})
         """
-        if DeviceType is None or DeviceType.type_id is None:
+        if DeviceType is None:
             if Device is not None:
                 self._Device = Device
             elif TypeName is not None:
@@ -620,7 +628,7 @@ class DomoticzDevice:
 class DomoticzConnection:
     """Defines the connection type that will be used by the object"""
 
-    def __init__(self, d: DomoticzWrapper = None, Name: str = None, Transport: str = None, Protocol: str = None, Address: str = None, Port: str = None, Baud: int = 115200, Connection = None):
+    def __init__(self, d: DomoticzWrapper = None, Name: str = None, Transport: str = None, Protocol: str = None, Address: str = None, Port: str = None, Baud: int = 115200, Connection=None):
         """Defines the connection type that will be used by the object
 
         Arguments:
@@ -768,7 +776,7 @@ class DomoticzImage:
     described [here](https://www.domoticz.com/wiki/Custom_icons_for_webinterface#Creating_simple_home_made_icons).
     Resultant zip file(s) should be placed in the folder with the plugin itself"""
 
-    def __init__(self, d: DomoticzWrapper=None, filename: str=None, Image=None):
+    def __init__(self, d: DomoticzWrapper = None, filename: str = None, Image=None):
         if Image is not None:
             self._Image = Image
         else:
@@ -841,18 +849,6 @@ class DomoticzImage:
         Deleted images are immediately removed from the Images dictionary but local instances of the object are unchanged.
         """
         return self._Image.Delete()
-
-
-class DomoticzDeviceType:
-    """Domoticz Device Type definition"""
-
-    def __init__(self,
-                 type_id: int,
-                 subtype_id: int = None,
-                 switchtype_id: int = None):
-        self.type_id = type_id
-        self.subtype_id = subtype_id
-        self.switchtype_id = switchtype_id
 
 
 class DomoticzDeviceTypes:
