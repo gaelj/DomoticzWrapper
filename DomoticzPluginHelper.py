@@ -41,6 +41,13 @@ class DomoticzPluginHelper:
     def onStop(self):
         self.d.Debugging([DomoticzDebugLevel.ShowNone])
 
+    def onCommand(self, Unit, Command, Level, Color):
+        self.d.Debug("onCommand called for Unit {}: Command '{}', Level: {}".format(
+            Unit, Command, Level))
+
+    def onHeartbeat(self):
+        pass
+
     def DomoticzAPI(self, APICall: str):
         resultJson = None
         url = "http://{}:{}/json.htm?{}".format(
@@ -110,7 +117,7 @@ class DomoticzPluginHelper:
         self.d.Debug("***** End plugin config *****")
         return
 
-    def getUserVar(self):
+    def GetUserVar(self):
         variables = self.DomoticzAPI("type=command&param=getuservariables")
         if variables:
             # there is a valid response from the API but we do not know if our variable exists yet
@@ -163,7 +170,7 @@ class DomoticzPluginHelper:
                 "Cannot read the uservariable holding the persistent variables")
             self.Internals = self.InternalsDefaults.copy()
 
-    def saveUserVar(self):
+    def SaveUserVar(self):
         varname = self.d.Parameters.Name + \
             "-InternalVariables"
         self.DomoticzAPI("type=command&param=updateuservariable&vname={}&vtype=2&vvalue={}".format(
@@ -179,7 +186,26 @@ class DomoticzPluginHelper:
             self.Log(message)
 
 
-def parseCSV(strCSV: str):
+class DeviceParam:
+    """The string and numeric values, and unit name of a measurement"""
+
+    def __init__(self, unit, nValue, sValue):
+        self.unit = unit
+        self.nValue = nValue
+        self.sValue = sValue
+
+# class DomoticzDeviceType:
+#     """Domoticz Device Type definition"""
+#     type_id: int
+#     type_name: str
+#     subtype_id: int
+#     subtype_name: str
+#     switchtype_id: int
+#     switchtype_name: str
+#     description: str
+
+
+def ParseCSV(strCSV: str):
     listValues = []
     for value in strCSV.split(","):
         try:

@@ -175,10 +175,6 @@ class DomoticzImage:
     pass
 
 
-class DeviceParam:
-    pass
-
-
 class DomoticzWrapper:
     def __init__(self, _Domoticz, _Settings, _Parameters, _Devices, _Images):
         self.__Domoticz = _Domoticz
@@ -835,24 +831,3 @@ class DomoticzImage:
         Deleted images are immediately removed from the Images dictionary but local instances of the object are unchanged.
         """
         return self._Image.Delete()
-
-
-class DeviceParam:
-    """The string and numeric values, and unit name of a measurement"""
-
-    def __init__(self, unit, nValue, sValue):
-        self.unit = unit
-        self.nValue = nValue
-        self.sValue = sValue
-
-
-# @dataclass
-# class DomoticzDeviceType:
-#     """Domoticz Device Type definition"""
-#     type_id: int
-#     type_name: str
-#     subtype_id: int
-#     subtype_name: str
-#     switchtype_id: int
-#     switchtype_name: str
-#     description: str
