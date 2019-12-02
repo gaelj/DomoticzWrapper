@@ -79,7 +79,6 @@ class DomoticzDebugLevel(IntEnum):
 #     Mode6 = 'Mode6'
 #     SerialPort = 'SerialPort'
 
-@dataclass
 class DomoticzPluginParameters:
     """Domoticz parameter values
 
@@ -100,26 +99,28 @@ class DomoticzPluginParameters:
     - Enum {Mode6} -- General Parameter 6
     - Enum {SerialPort} -- SerialPort, used when connecting to Serial Ports.
     """
-    Key: str
-    HomeFolder: str
-    Author: str
-    Version: str
-    Address: str
-    Port: str
-    Username: str
-    Password: str
-    Mode1: str
-    Mode2: str
-    Mode3: str
-    Mode4: str
-    Mode5: str
-    Mode6: str
-    SerialPort: str
 
     def __init__(self, parameters: Dict[str, str]):
+        self.Key = ''
+        self.HomeFolder = ''
+        self.Author = ''
+        self.Version = ''
+        self.Address = ''
+        self.Port = ''
+        self.Username = ''
+        self.Password = ''
+        self.Mode1 = ''
+        self.Mode2 = ''
+        self.Mode3 = ''
+        self.Mode4 = ''
+        self.Mode5 = ''
+        self.Mode6 = ''
+        self.SerialPort = ''
         for x in parameters:
-            if x in self:
-                self[x] = parameters[x]
+            try:
+                setattr(self, x, parameters[x])
+            except:
+                pass
 
 
 class DomoticzTypeName(Enum):
