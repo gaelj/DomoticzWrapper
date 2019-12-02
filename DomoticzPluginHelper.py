@@ -96,7 +96,7 @@ class DomoticzPluginHelper:
         for x in self.d.ParametersDict:
             parameter = self.d.ParametersDict[x]
             if parameter != "":
-                self.d.Debug("'" + str(x.name) + "':'" + str(parameter) + "'")
+                self.d.Debug("'" + x + "':'" + str(parameter) + "'")
         self.d.Debug("Device count: " + str(len(self.d.Devices)))
         for x in self.d.Devices:
             device = self.d.Devices[x]
