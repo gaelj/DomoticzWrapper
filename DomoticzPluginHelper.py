@@ -92,6 +92,7 @@ class DomoticzPluginHelper:
         return param
 
     def DumpConfigToLog(self):
+        self.d.Debug("***** Start plugin config *****")
         for x in self.d.ParametersDict:
             parameter = self.d.ParametersDict[x]
             if parameter != "":
@@ -106,6 +107,7 @@ class DomoticzPluginHelper:
             self.d.Debug("Device nValue:    " + str(device.nValue))
             self.d.Debug("Device sValue:   '" + device.sValue + "'")
             self.d.Debug("Device LastLevel: " + str(device.LastLevel))
+        self.d.Debug("***** End plugin config *****")
         return
 
     def getUserVar(self):
@@ -169,7 +171,7 @@ class DomoticzPluginHelper:
 
     def WriteLog(self, message, level="Normal"):
         if (self.logLevel == "Verbose" and level == "Verbose") or level == "Status":
-            if self.statusSupported:
+            if self.statusSupported and level == "Status":
                 self.Status(message)
             else:
                 self.Log(message)
