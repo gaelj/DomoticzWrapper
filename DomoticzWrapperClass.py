@@ -381,8 +381,8 @@ class DomoticzDevice:
                                                 Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
                                                 Image=Image, Options=Options, Used=1 if Used else 0, DeviceID=DeviceID)
             return
-        if self.d is not None:
-            self.d.Log('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
+        if d is not None:
+            d.Log('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
         raise Exception()
 
     # def __init__(self, d: DomoticzWrapper,
