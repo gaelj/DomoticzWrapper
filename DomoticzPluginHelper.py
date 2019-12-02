@@ -199,6 +199,18 @@ class DomoticzPluginHelper:
         elif level == "Normal":
             self.Log(message)
 
+    def InitDevice(self, Name: str, Unit: int,
+                 DeviceType: DomoticzDeviceType,
+                 Image: int = None,
+                 Options: Dict[str, str] = None,
+                 Used: bool = False,
+                 defaultNValue = 0,
+                 defaultSValue: str = ""):
+        """Called for each device during onStart. Creates devices if needed"""
+        if Unit not in self.d.Devices:
+            DomoticzDevice(self.d, Name=Name, Unit=Unit, DeviceType=DeviceType, Image=Image, Options=Options, Used=Used).Create()
+            self.d.Devices[Unit].Update(nValue=defaultNValue, sValue=defaultSValue)
+
 
 class DeviceParam:
     """The string and numeric values, and unit name of a measurement"""
