@@ -337,9 +337,9 @@ class DomoticzDevice:
                  Name: str = None, Unit: int = None,
                  DeviceType: DomoticzDeviceType = None,
                  TypeName: DomoticzTypeName = None,
-                 Image: int = None,
-                 Options: Dict[str, str] = None,
                  Used: bool = False,
+                 Options: Dict[str, str] = None,
+                 Image: int = None,
                  DeviceID: str = None,
                  Device=None):
         """Creator
@@ -424,7 +424,7 @@ class DomoticzDevice:
         """Creates the device in Domoticz from the object."""
         self._Device.Create()
 
-    def Update(self, nValue: float, sValue: str, **kvargs):
+    def Update(self, nValue: int, sValue: str, **kvargs):
         """Updates the current values in Domoticz.
 
         Arguments:
