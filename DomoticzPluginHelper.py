@@ -21,7 +21,7 @@ from distutils.version import LooseVersion
 from DomoticzWrapperClass import \
     DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
     DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage, \
-    DomoticzDeviceTypes
+    DomoticzDeviceType, DomoticzDeviceTypes
 
 
 class DomoticzPluginHelper:
@@ -205,7 +205,7 @@ class DomoticzPluginHelper:
                    Options: Dict[str, str] = None,
                    Used: bool = False,
                    defaultNValue: float = float(0),
-                   defaultSValue: str = ""):
+                   defaultSValue: str = ''):
         """Called for each device during onStart. Creates devices if needed"""
         if Unit not in self.d.Devices:
             DomoticzDevice(self.d, Name=Name, Unit=Unit, DeviceType=DeviceType,
