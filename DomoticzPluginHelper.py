@@ -41,9 +41,21 @@ class DomoticzPluginHelper:
     def onStop(self):
         self.d.Debugging([DomoticzDebugLevel.ShowNone])
 
+    def onConnect(self, Connection, Status, Description):
+        self.d.Log("onConnect called")
+
+    def onMessage(self, Connection, Data):
+        self.d.Log("onMessage called")
+
     def onCommand(self, Unit, Command, Level, Color):
         self.d.Debug("onCommand called for Unit {}: Command '{}', Level: {}".format(
             Unit, Command, Level))
+
+    def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
+        self.d.Log("Notification: " + Name + "," + Subject + "," + Text + "," + Status + "," + str(Priority) + "," + Sound + "," + ImageFile)
+
+    def onDisconnect(self, Connection):
+        self.d.Log("onDisconnect called")
 
     def onHeartbeat(self):
         pass
@@ -189,7 +201,7 @@ class DomoticzPluginHelper:
 class DeviceParam:
     """The string and numeric values, and unit name of a measurement"""
 
-    def __init__(self, unit, nValue, sValue):
+    def __init__(self, unit: int, nValue, sValue: str):
         self.unit = unit
         self.nValue = nValue
         self.sValue = sValue
