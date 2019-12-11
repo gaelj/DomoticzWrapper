@@ -17,8 +17,7 @@ import base64
 import itertools
 from distutils.version import LooseVersion
 
-
-from DomoticzWrapperClass import \
+from DAT.DomoticzWrapper.DomoticzWrapperClass import \
     DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
     DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage, \
     DomoticzDeviceType, DomoticzDeviceTypes
@@ -34,10 +33,12 @@ class DomoticzPluginHelper:
         self.statusSupported = True
         self.InternalsDefaults = _internalsDefaults
         self.Internals = self.InternalsDefaults.copy()
+        self.DeviceUnits = set()
 
     def onStart(self):
         self.d.Debugging([DomoticzDebugLevel.ShowAll])
         self.DumpConfigToLog()
+        self.GetUserVar()
 
     def onStop(self):
         self.d.Debugging([DomoticzDebugLevel.ShowNone])
@@ -60,7 +61,10 @@ class DomoticzPluginHelper:
         self.d.Log("onDisconnect called")
 
     def onHeartbeat(self):
-        pass
+        if not all(device in self.d.Devices for device in self.DeviceUnits):
+            self.d.Error(
+                "one or more devices required by the plugin is/are missing, please check domoticz device creation settings and restart !")
+            return
 
     def DomoticzAPI(self, APICall: str):
         resultJson = None
@@ -154,7 +158,7 @@ class DomoticzPluginHelper:
                 # there is a breaking change on dzvents_version 2.4.9, API was changed from 'saveuservariable' to 'adduservariable'
                 # using 'saveuservariable' on latest versions returns a "status = 'ERR'" error
 
-                # get a status of the actual running Domoticz instance, set the parameter accordigly
+                # get a status of the actual running Domoticz instance, set the parameter accordingly
                 parameter = "saveuservariable"
                 domoticzInfo = self.DomoticzAPI(
                     "type=command&param=getversion")
@@ -200,21 +204,22 @@ class DomoticzPluginHelper:
             self.d.Log(message)
 
     def InitDevice(self, Name: str, Unit: int,
-                   DeviceType: DomoticzDeviceType,
-                   Image: int = None,
-                   Options: Dict[str, str] = None,
-                   Used: bool = False,
-                   defaultNValue: int = 0,
-                   defaultSValue: str = ''):
+                    DeviceType: DomoticzDeviceType,
+                    Image: int = None,
+                    Options: Dict[str, str] = None,
+                    Used: bool = False,
+                    defaultNValue: int = 0,
+                    defaultSValue: str = ''):
         """Called for each device during onStart. Creates devices if needed"""
-        if Unit not in self.d.Devices:
+        self.DeviceUnits.add(int(Unit))
+        if int(Unit) not in self.d.Devices:
             if Image is None:
-                DomoticzDevice(d=self.d, Name=Name, Unit=Unit, DeviceType=DeviceType,
-                               Options=Options, Used=Used).Create()
+                DomoticzDevice(d=self.d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
+                                Options=Options, Used=Used).Create()
             else:
-                DomoticzDevice(d=self.d, Name=Name, Unit=Unit, DeviceType=DeviceType,
-                               Image=Image, Options=Options, Used=Used).Create()
-            self.d.Devices[Unit].Update(
+                DomoticzDevice(d=self.d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
+                                Image=Image, Options=Options, Used=Used).Create()
+            self.d.Devices[int(Unit)].Update(
                 nValue=defaultNValue, sValue=defaultSValue)
 
 
