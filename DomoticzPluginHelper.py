@@ -68,7 +68,7 @@ class DomoticzPluginHelper:
         self.__d.Log("onDisconnect called")
 
     def onHeartbeat(self):
-        if not all(device in self.d.Devices for device in self.DeviceUnits):
+        if not all(device in self.__d.Devices for device in self.DeviceUnits):
             self.__d.Error(
                 "one or more devices required by the plugin is/are missing, please check domoticz device creation settings and restart !")
             return
@@ -80,7 +80,7 @@ class DomoticzPluginHelper:
         self.__d.Debug("Calling domoticz API: {}".format(url))
         try:
             req = request.Request(url)
-            if self.d.Parameters.Username != "":
+            if self.__d.Parameters.Username != "":
                 self.__d.Debug("Add authentication for user {}".format(
                     self.__d.Parameters.Username))
                 credentials = ('%s:%s' %
@@ -129,7 +129,7 @@ class DomoticzPluginHelper:
             parameter = self.__d.ParametersDict[x]
             if parameter != "":
                 self.__d.Debug("'" + x + "':'" + str(parameter) + "'")
-        self.__d.Debug("Device count: " + str(len(self.d.Devices)))
+        self.__d.Debug("Device count: " + str(len(self.__d.Devices)))
         for x in self.__d.Devices:
             device = self.__d.Devices[x]
             self.__d.Debug("Device:           " +
@@ -219,12 +219,12 @@ class DomoticzPluginHelper:
                     defaultSValue: str = ''):
         """Called for each device during onStart. Creates devices if needed"""
         self.InitializedDeviceUnits.add(int(Unit))
-        if int(Unit) not in self.d.Devices:
+        if int(Unit) not in self.__d.Devices:
             if Image is None:
-                DomoticzDevice(d=self.d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
+                DomoticzDevice(d=self.__d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
                                 Options=Options, Used=Used).Create()
             else:
-                DomoticzDevice(d=self.d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
+                DomoticzDevice(d=self.__d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
                                 Image=Image, Options=Options, Used=Used).Create()
             self.__d.Devices[int(Unit)].Update(
                 nValue=defaultNValue, sValue=defaultSValue)
