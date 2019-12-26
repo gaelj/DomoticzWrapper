@@ -17,15 +17,22 @@ import base64
 import itertools
 from distutils.version import LooseVersion
 
-from DAT.DomoticzWrapper.DomoticzWrapperClass import \
+# dev
+# from DAT.DomoticzWrapper.DomoticzWrapperClass import \
+#     DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
+#     DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage, \
+#     DomoticzDeviceType, DomoticzDeviceTypes
+
+# prod
+from DomoticzWrapperClass import \
     DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
     DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage, \
     DomoticzDeviceType, DomoticzDeviceTypes
 
 
 class DomoticzPluginHelper:
-    def __init__(self, _d: DomoticzWrapper, _internalsDefaults):
-        self.d = _d
+    def __init__(self, Domoticz, Settings, Parameters, Devices, Images, _internalsDefaults):
+        self.__d = DomoticzWrapper(Domoticz, Settings, Parameters, Devices, Images)
 
         # internal configuration
         self.debug = False
@@ -33,51 +40,51 @@ class DomoticzPluginHelper:
         self.statusSupported = True
         self.InternalsDefaults = _internalsDefaults
         self.Internals = self.InternalsDefaults.copy()
-        self.DeviceUnits = set()
+        self.InitializedDeviceUnits = set() # keeps track of initialized devices unit numbers
 
     def onStart(self):
-        self.d.Debugging([DomoticzDebugLevel.ShowAll])
+        self.__d.Debugging([DomoticzDebugLevel.ShowAll])
         self.DumpConfigToLog()
         self.GetUserVar()
 
     def onStop(self):
-        self.d.Debugging([DomoticzDebugLevel.ShowNone])
+        self.__d.Debugging([DomoticzDebugLevel.ShowNone])
 
     def onConnect(self, Connection, Status, Description):
-        self.d.Log("onConnect called")
+        self.__d.Log("onConnect called")
 
     def onMessage(self, Connection, Data):
-        self.d.Log("onMessage called")
+        self.__d.Log("onMessage called")
 
     def onCommand(self, Unit, Command, Level, Color):
-        self.d.Debug("onCommand called for Unit {}: Command '{}', Level: {}".format(
+        self.__d.Debug("onCommand called for Unit {}: Command '{}', Level: {}".format(
             Unit, Command, Level))
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
-        self.d.Log("Notification: " + Name + "," + Subject + "," + Text +
+        self.__d.Log("Notification: " + Name + "," + Subject + "," + Text +
                    "," + Status + "," + str(Priority) + "," + Sound + "," + ImageFile)
 
     def onDisconnect(self, Connection):
-        self.d.Log("onDisconnect called")
+        self.__d.Log("onDisconnect called")
 
     def onHeartbeat(self):
         if not all(device in self.d.Devices for device in self.DeviceUnits):
-            self.d.Error(
+            self.__d.Error(
                 "one or more devices required by the plugin is/are missing, please check domoticz device creation settings and restart !")
             return
 
-    def DomoticzAPI(self, APICall: str):
+    def DomoticzAPI(self, apiCall: str):
         resultJson = None
         url = "http://{}:{}/json.htm?{}".format(
-            self.d.Parameters.Address, self.d.Parameters.Port, parse.quote(APICall, safe="&="))
-        self.d.Debug("Calling domoticz API: {}".format(url))
+            self.__d.Parameters.Address, self.__d.Parameters.Port, parse.quote(apiCall, safe="&="))
+        self.__d.Debug("Calling domoticz API: {}".format(url))
         try:
             req = request.Request(url)
             if self.d.Parameters.Username != "":
-                self.d.Debug("Add authentication for user {}".format(
-                    self.d.Parameters.Username))
+                self.__d.Debug("Add authentication for user {}".format(
+                    self.__d.Parameters.Username))
                 credentials = ('%s:%s' %
-                               (self.d.Parameters.Username, self.d.Parameters.Password))
+                               (self.__d.Parameters.Username, self.__d.Parameters.Password))
                 encoded_credentials = base64.b64encode(
                     credentials.encode('ascii'))
                 req.add_header('Authorization', 'Basic %s' %
@@ -87,14 +94,14 @@ class DomoticzPluginHelper:
             if response.status == 200:
                 resultJson = json.loads(response.read().decode('utf-8'))
                 if resultJson["status"] != "OK":
-                    self.d.Error("Domoticz API returned an error: status = {}".format(
+                    self.__d.Error("Domoticz API returned an error: status = {}".format(
                         resultJson["status"]))
                     resultJson = None
             else:
-                self.d.Error(
+                self.__d.Error(
                     "Domoticz API: http error = {}".format(response.status))
         except:
-            self.d.Error("Error calling '{}'".format(url))
+            self.__d.Error("Error calling '{}'".format(url))
         return resultJson
 
     def CheckParam(self, name: str, value, default: int):
@@ -112,27 +119,27 @@ class DomoticzPluginHelper:
             param = int(value)
         except ValueError:
             param = default
-            self.d.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(
+            self.__d.Error("Parameter '{}' has an invalid value of '{}' ! default of '{}' is instead used.".format(
                 name, value, default))
         return param
 
     def DumpConfigToLog(self):
-        self.d.Debug("***** Start plugin config *****")
-        for x in self.d.ParametersDict:
-            parameter = self.d.ParametersDict[x]
+        self.__d.Debug("***** Start plugin config *****")
+        for x in self.__d.ParametersDict:
+            parameter = self.__d.ParametersDict[x]
             if parameter != "":
-                self.d.Debug("'" + x + "':'" + str(parameter) + "'")
-        self.d.Debug("Device count: " + str(len(self.d.Devices)))
-        for x in self.d.Devices:
-            device = self.d.Devices[x]
-            self.d.Debug("Device:           " +
+                self.__d.Debug("'" + x + "':'" + str(parameter) + "'")
+        self.__d.Debug("Device count: " + str(len(self.d.Devices)))
+        for x in self.__d.Devices:
+            device = self.__d.Devices[x]
+            self.__d.Debug("Device:           " +
                          str(x) + " - " + str(device))
-            self.d.Debug("Device ID:       '" + str(device.ID) + "'")
-            self.d.Debug("Device Name:     '" + device.Name + "'")
-            self.d.Debug("Device nValue:    " + str(device.nValue))
-            self.d.Debug("Device sValue:   '" + device.sValue + "'")
-            self.d.Debug("Device LastLevel: " + str(device.LastLevel))
-        self.d.Debug("***** End plugin config *****")
+            self.__d.Debug("Device ID:       '" + str(device.ID) + "'")
+            self.__d.Debug("Device Name:     '" + device.Name + "'")
+            self.__d.Debug("Device nValue:    " + str(device.nValue))
+            self.__d.Debug("Device sValue:   '" + device.sValue + "'")
+            self.__d.Debug("Device LastLevel: " + str(device.LastLevel))
+        self.__d.Debug("***** End plugin config *****")
         return
 
     def GetUserVar(self):
@@ -140,7 +147,7 @@ class DomoticzPluginHelper:
         if variables:
             # there is a valid response from the API but we do not know if our variable exists yet
             noVar = True
-            varname = self.d.Parameters.Name + \
+            varname = self.__d.Parameters.Name + \
                 "-InternalVariables"
             valuestring = ""
             if "result" in variables:
@@ -163,7 +170,7 @@ class DomoticzPluginHelper:
                 domoticzInfo = self.DomoticzAPI(
                     "type=command&param=getversion")
                 if domoticzInfo is None:
-                    self.d.Error(
+                    self.__d.Error(
                         "Unable to fetch Domoticz info... unable to determine version")
                 else:
                     if domoticzInfo and LooseVersion(domoticzInfo["dzvents_version"]) >= LooseVersion("2.4.9"):
@@ -184,12 +191,12 @@ class DomoticzPluginHelper:
                     self.Internals = self.InternalsDefaults.copy()
                 return
         else:
-            self.d.Error(
+            self.__d.Error(
                 "Cannot read the uservariable holding the persistent variables")
             self.Internals = self.InternalsDefaults.copy()
 
     def SaveUserVar(self):
-        varname = self.d.Parameters.Name + \
+        varname = self.__d.Parameters.Name + \
             "-InternalVariables"
         self.DomoticzAPI("type=command&param=updateuservariable&vname={}&vtype=2&vvalue={}".format(
             varname, str(self.Internals)))
@@ -197,11 +204,11 @@ class DomoticzPluginHelper:
     def WriteLog(self, message, level="Normal"):
         if (self.logLevel == "Verbose" and level == "Verbose") or level == "Status":
             if self.statusSupported and level == "Status":
-                self.d.Status(message)
+                self.__d.Status(message)
             else:
-                self.d.Log(message)
+                self.__d.Log(message)
         elif level == "Normal":
-            self.d.Log(message)
+            self.__d.Log(message)
 
     def InitDevice(self, Name: str, Unit: int,
                     DeviceType: DomoticzDeviceType,
@@ -211,7 +218,7 @@ class DomoticzPluginHelper:
                     defaultNValue: int = 0,
                     defaultSValue: str = ''):
         """Called for each device during onStart. Creates devices if needed"""
-        self.DeviceUnits.add(int(Unit))
+        self.InitializedDeviceUnits.add(int(Unit))
         if int(Unit) not in self.d.Devices:
             if Image is None:
                 DomoticzDevice(d=self.d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
@@ -219,7 +226,7 @@ class DomoticzPluginHelper:
             else:
                 DomoticzDevice(d=self.d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
                                 Image=Image, Options=Options, Used=Used).Create()
-            self.d.Devices[int(Unit)].Update(
+            self.__d.Devices[int(Unit)].Update(
                 nValue=defaultNValue, sValue=defaultSValue)
 
 
