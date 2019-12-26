@@ -32,7 +32,8 @@ from DomoticzWrapperClass import \
 
 class DomoticzPluginHelper:
     def __init__(self, Domoticz, Settings, Parameters, Devices, Images, _internalsDefaults):
-        self.__d = DomoticzWrapper(Domoticz, Settings, Parameters, Devices, Images)
+        self.__d = DomoticzWrapper(
+            Domoticz, Settings, Parameters, Devices, Images)
 
         # internal configuration
         self.debug = False
@@ -40,7 +41,9 @@ class DomoticzPluginHelper:
         self.statusSupported = True
         self.InternalsDefaults = _internalsDefaults
         self.Internals = self.InternalsDefaults.copy()
-        self.InitializedDeviceUnits = set() # keeps track of initialized devices unit numbers
+        # keeps track of initialized devices unit numbers
+        self.InitializedDeviceUnits = set()
+        self.ActiveSensors = dict()
 
     def onStart(self):
         self.__d.Debugging([DomoticzDebugLevel.ShowAll])
@@ -62,7 +65,7 @@ class DomoticzPluginHelper:
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
         self.__d.Log("Notification: " + Name + "," + Subject + "," + Text +
-                   "," + Status + "," + str(Priority) + "," + Sound + "," + ImageFile)
+                     "," + Status + "," + str(Priority) + "," + Sound + "," + ImageFile)
 
     def onDisconnect(self, Connection):
         self.__d.Log("onDisconnect called")
@@ -133,7 +136,7 @@ class DomoticzPluginHelper:
         for x in self.__d.Devices:
             device = self.__d.Devices[x]
             self.__d.Debug("Device:           " +
-                         str(x) + " - " + str(device))
+                           str(x) + " - " + str(device))
             self.__d.Debug("Device ID:       '" + str(device.ID) + "'")
             self.__d.Debug("Device Name:     '" + device.Name + "'")
             self.__d.Debug("Device nValue:    " + str(device.nValue))
@@ -211,21 +214,21 @@ class DomoticzPluginHelper:
             self.__d.Log(message)
 
     def InitDevice(self, Name: str, Unit: int,
-                    DeviceType: DomoticzDeviceType,
-                    Image: int = None,
-                    Options: Dict[str, str] = None,
-                    Used: bool = False,
-                    defaultNValue: int = 0,
-                    defaultSValue: str = ''):
+                   DeviceType: DomoticzDeviceType,
+                   Image: int = None,
+                   Options: Dict[str, str] = None,
+                   Used: bool = False,
+                   defaultNValue: int = 0,
+                   defaultSValue: str = ''):
         """Called for each device during onStart. Creates devices if needed"""
         self.InitializedDeviceUnits.add(int(Unit))
         if int(Unit) not in self.__d.Devices:
             if Image is None:
                 DomoticzDevice(d=self.__d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
-                                Options=Options, Used=Used).Create()
+                               Options=Options, Used=Used).Create()
             else:
                 DomoticzDevice(d=self.__d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
-                                Image=Image, Options=Options, Used=Used).Create()
+                               Image=Image, Options=Options, Used=Used).Create()
             self.__d.Devices[int(Unit)].Update(
                 nValue=defaultNValue, sValue=defaultSValue)
 
@@ -238,6 +241,33 @@ class DomoticzPluginHelper:
         """
         return self.__d.Devices
 
+    def SensorTimedOut(self, idx, name, dateString):
+        def LastUpdate(dateString):
+            dateFormat = "%Y-%m-%d %H:%M:%S"
+            # the below try/except is meant to address an intermittent python bug in some embedded systems
+            try:
+                result = datetime.strptime(dateString, dateFormat)
+            except TypeError:
+                result = datetime(
+                    *(time.strptime(dateString, dateFormat)[0:6]))
+            return result
+
+        timedOut = LastUpdate(
+            dateString) + timedelta(minutes=int(self.__d.Settings["SensorTimeout"])) < datetime.now()
+
+        # handle logging of time outs... only log when status changes (less clutter in logs)
+        if timedOut:
+            if self.ActiveSensors[idx]:
+                self.__d.Error(
+                    "skipping timed out temperature sensor '{}'".format(name))
+                self.ActiveSensors[idx] = False
+        else:
+            if not self.ActiveSensors[idx]:
+                self.WriteLog(
+                    "previously timed out temperature sensor '{}' is back online".format(name), "Status")
+                self.ActiveSensors[idx] = True
+
+        return timedOut
 
 
 class DeviceParam:
