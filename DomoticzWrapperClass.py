@@ -1358,7 +1358,9 @@ class DomoticzDeviceTypes:
         """"""
         return DomoticzDeviceType(244, 73, 17)
 
-    @classmethod
+    # @classmethod
+    @staticmethod
+    @property
     def LightSwitch_Switch_Selector(cls) -> DomoticzDeviceType:
         """"""
         return DomoticzDeviceType(244, 73, 18)
