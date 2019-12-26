@@ -68,9 +68,9 @@ class DomoticzPluginHelper:
         self.__d.Log("onDisconnect called")
 
     def onHeartbeat(self):
-        if not all(device in self.__d.Devices for device in self.DeviceUnits):
+        if not all(device in self.__d.Devices for device in self.InitializedDeviceUnits):
             self.__d.Error(
-                "one or more devices required by the plugin is/are missing, please check domoticz device creation settings and restart !")
+                "Missing one or more devices required by the plugin. Please check domoticz device creation settings and restart !")
             return
 
     def DomoticzAPI(self, apiCall: str):
