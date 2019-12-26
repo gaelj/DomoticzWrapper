@@ -229,6 +229,16 @@ class DomoticzPluginHelper:
             self.__d.Devices[int(Unit)].Update(
                 nValue=defaultNValue, sValue=defaultSValue)
 
+    @property
+    def Devices(self) -> Dict[int, DomoticzDevice]:
+        """Dictionary of device ids to device objects
+
+        Returns:
+            Dict[int, DomoticzDevice] -- Dictionary of device ids to device objects
+        """
+        return self.__d.Devices
+
+
 
 class DeviceParam:
     """The string and numeric values, and unit name of a measurement"""
