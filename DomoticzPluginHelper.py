@@ -256,6 +256,8 @@ class DomoticzPluginHelper:
             dateString) + timedelta(minutes=int(self.__d.Settings["SensorTimeout"])) < datetime.now()
 
         # handle logging of time outs... only log when status changes (less clutter in logs)
+        if idx not in self.ActiveSensors:
+            self.ActiveSensors[idx] = True
         if timedOut:
             if self.ActiveSensors[idx]:
                 self.__d.Error(
