@@ -19,10 +19,6 @@ from distutils.version import LooseVersion
 
 # dev
 # from DAT.DomoticzWrapper.DomoticzWrapperClass import \
-#     DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
-#     DomoticzWrapper, DomoticzDevice, DomoticzConnection, DomoticzImage, \
-#     DomoticzDeviceType, DomoticzDeviceTypes
-
 # prod
 from DomoticzWrapperClass import \
     DomoticzTypeName, DomoticzDebugLevel, DomoticzPluginParameters, \
