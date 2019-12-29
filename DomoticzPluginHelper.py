@@ -217,7 +217,6 @@ class DomoticzPluginHelper:
                    defaultNValue: int = 0,
                    defaultSValue: str = ''):
         """Called for each device during onStart. Creates devices if needed"""
-        self.InitializedDeviceUnits.add(int(Unit))
         if int(Unit) not in self.__d.Devices:
             if Image is None:
                 DomoticzDevice(d=self.__d, Name=Name, Unit=int(Unit), DeviceType=DeviceType,
@@ -227,6 +226,7 @@ class DomoticzPluginHelper:
                                Image=Image, Options=Options, Used=Used).Create()
             self.__d.Devices[int(Unit)].Update(
                 nValue=defaultNValue, sValue=defaultSValue)
+        self.InitializedDeviceUnits.add(int(Unit))
 
     @property
     def Devices(self) -> Dict[int, DomoticzDevice]:
