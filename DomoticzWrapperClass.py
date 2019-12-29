@@ -368,7 +368,7 @@ class DomoticzDevice:
             else:
                 self._Device = d.Domoticz.Device(Name=Name, Unit=Unit, TypeName=TypeName.value,
                                                 Image=Image, Options=Options, Used=1 if Used else 0)
-        elif isinstance(DeviceType, DomoticzDeviceType):
+        else:
             if DeviceType.subtype_id is None:
                 if Image is None:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
@@ -396,10 +396,6 @@ class DomoticzDevice:
                     self._Device = d.Domoticz.Device(Name=Name, Unit=Unit,
                                                     Type=DeviceType.type_id, Subtype=DeviceType.subtype_id, Switchtype=DeviceType.switchtype_id,
                                                     Image=Image, Options=Options, Used=1 if Used else 0)
-        else:
-            if d is not None:
-                d.Log('Unexpected constructor arguments: DeviceType is ' + str(DeviceType))
-            raise Exception()
 
     # def __init__(self, d: DomoticzWrapper,
     #              Name: str, Unit: int,
