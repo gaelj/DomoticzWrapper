@@ -69,7 +69,7 @@ class DomoticzPluginHelper:
     def onHeartbeat(self):
         if not all(device in self.__d.Devices for device in self.InitializedDeviceUnits):
             self.__d.Error(
-                "Missing one or more devices required by the plugin. Please check domoticz device creation settings and restart !")
+                "Found " + str(len(self.__d.Devices)) + " devices, while plugin expects " + str(len(self.InitializedDeviceUnits)) + ". Please check domoticz device creation settings and restart !")
             return
 
     def DomoticzAPI(self, apiCall: str):
