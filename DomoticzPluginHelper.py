@@ -42,8 +42,20 @@ class DomoticzPluginHelper:
         self.ActiveSensors = dict()
 
     def onStart(self):
-        self.__d.Debugging([DomoticzDebugLevel.ShowAll])
-        self.DumpConfigToLog()
+        try:
+            debuglevel = int(self.__d.Parameters["Mode6"])
+        except ValueError:
+            debuglevel = 0
+            self.logLevel = self.__d.Parameters["Mode6"]
+        if debuglevel != 0:
+            self.debug = True
+            self.__d.Debugging([DomoticzDebugLevel(debuglevel)])
+            DumpConfigToLog()
+            self.logLevel = "Verbose"
+        else:
+            self.debug = False
+            self.__d.Debugging([DomoticzDebugLevel.ShowNone])
+
         self.GetUserVar()
 
     def onStop(self):
