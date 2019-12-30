@@ -76,6 +76,29 @@ class DomoticzPluginParameters:
             except:
                 pass
 
+    @property
+    def Modes(self):
+        return {
+            1: self.Mode1,
+            2: self.Mode2,
+            3: self.Mode3,
+            4: self.Mode4,
+            5: self.Mode5,
+            6: self.Mode6,
+        }
+        # if modeIndex == 1:
+        #     return self.Mode1
+        # elif modeIndex == 2:
+        #     return self.Mode2
+        # elif modeIndex == 3:
+        #     return self.Mode3
+        # elif modeIndex == 4:
+        #     return self.Mode4
+        # elif modeIndex == 5:
+        #     return self.Mode5
+        # elif modeIndex == 6:
+        #     return self.Mode6
+
 
 class DomoticzTypeName(Enum):
     AirQuality = "AirQuality"
