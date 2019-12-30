@@ -43,10 +43,10 @@ class DomoticzPluginHelper:
 
     def onStart(self, debugModeIndex):
         try:
-            debuglevel = int(self.__d.Parameters["Mode" + str(debugModeIndex)])
+            debuglevel = int(self.__d.Parameters.Modes[debugModeIndex])
         except ValueError:
             debuglevel = 0
-            self.logLevel = self.__d.Parameters["Mode" + str(debugModeIndex)]
+            self.logLevel = self.__d.Parameters.Modes[debugModeIndex]
         if debuglevel != 0:
             self.debug = True
             self.__d.Debugging([DomoticzDebugLevel(debuglevel)])
