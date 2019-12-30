@@ -50,7 +50,7 @@ class DomoticzPluginHelper:
         if debuglevel != 0:
             self.debug = True
             self.__d.Debugging([DomoticzDebugLevel(debuglevel)])
-            DumpConfigToLog()
+            self.DumpConfigToLog()
             self.logLevel = "Verbose"
         else:
             self.debug = False
