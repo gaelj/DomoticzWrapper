@@ -249,6 +249,10 @@ class DomoticzPluginHelper:
         """
         return self.__d.Devices
 
+    @property
+    def Parameters(self) -> Dict[int, DomoticzPluginParameters]:
+        return self.__d.Parameters
+
     def SensorTimedOut(self, idx, name, dateString):
         def LastUpdate(dateString):
             dateFormat = "%Y-%m-%d %H:%M:%S"
