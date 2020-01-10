@@ -250,7 +250,7 @@ class DomoticzPluginHelper:
         return self.__d.Devices
 
     @property
-    def Parameters(self) -> Dict[int, DomoticzPluginParameters]:
+    def Parameters(self) -> DomoticzPluginParameters:
         return self.__d.Parameters
 
     def SensorTimedOut(self, idx, name, dateString):
