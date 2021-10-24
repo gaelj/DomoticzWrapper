@@ -178,8 +178,7 @@ class DomoticzPluginHelper:
 
                 # get a status of the actual running Domoticz instance, set the parameter accordingly
                 parameter = "saveuservariable"
-                domoticzInfo = self.DomoticzAPI(
-                    "type=command&param=getversion")
+                domoticzInfo = self.DomoticzAPI("type=command&param=getversion")
                 if domoticzInfo is None:
                     self.__d.Error(
                         "Unable to fetch Domoticz info... unable to determine version")
@@ -190,8 +189,7 @@ class DomoticzPluginHelper:
                         parameter = "adduservariable"
 
                 # actually calling Domoticz API
-                self.DomoticzAPI("type=command&param={}&vname={}&vtype=2&vvalue={}".format(
-                    parameter, varname, str(self.InternalsDefaults)))
+                self.DomoticzAPI(f"type=command&param={parameter}&vname={varname}&vtype=2&vvalue={str(self.InternalsDefaults)}")
 
                 # we re-initialize the internal variables
                 self.Internals = self.InternalsDefaults.copy()
@@ -209,8 +207,7 @@ class DomoticzPluginHelper:
     def SaveUserVar(self):
         varname = self.__d.Parameters.Name + \
             "-InternalVariables"
-        self.DomoticzAPI("type=command&param=updateuservariable&vname={}&vtype=2&vvalue={}".format(
-            varname, str(self.Internals)))
+        self.DomoticzAPI(f"type=command&param=updateuservariable&vname={varname}&vtype=2&vvalue={str(self.Internals)}")
 
     def WriteLog(self, message, level="Normal"):
         if (self.logLevel == "Verbose" and level == "Verbose") or level == "Status":
